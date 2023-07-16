@@ -18,7 +18,6 @@ const ProfileScreen = ({ navigation }) => {
 
   const handleLogoutFunction = () => {
     logoutFunction();
-    setProfile("");
   };
 
   return (
