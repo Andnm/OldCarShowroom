@@ -1,8 +1,13 @@
 import React from 'react'
+import { View, Text } from 'react-native';
 
 const Gift = () => {
   return (
-    <div>Gift</div>
+    <View>
+      <Text>
+        gift
+      </Text>
+    </View>
   )
 }
 
