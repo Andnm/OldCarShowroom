@@ -34,7 +34,7 @@ const CardItem = ({ navigation, car }) => {
         </View>
         <Text style={{ fontWeight: "bold", fontSize: 17, marginTop: 10 }}>{car.name}</Text>
         <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 5 }}>
-          <Text style={{ fontSize: 17, fontWeight: "bold", color: COLORS.red }}>{shortenPrice(car.minPrice) + " - " + shortenPrice(car.maxPrice)} VND</Text>
+          <Text style={{ fontSize: 13, color: COLORS.red }}>{shortenPrice(car.minPrice) + " - " + shortenPrice(car.maxPrice)} VND</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -43,7 +43,7 @@ const CardItem = ({ navigation, car }) => {
 
 const style = StyleSheet.create({
   card: {
-    height: 210,
+    height: 220,
     width,
     backgroundColor: COLORS.light,
     marginHorizontal: 2,

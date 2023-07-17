@@ -80,6 +80,7 @@ const Home = ({ navigation }) => {
   const [carData, setCarData] = useState([]);
   const { accessToken, userDecode } = useContext(AuthContext);
 
+
   useEffect(() => {
     getTime()
   }, [])
@@ -125,7 +126,15 @@ const Home = ({ navigation }) => {
               {title}
             </Text>
           ) : (
-            <Text>{userDecode.fullName}</Text>
+            <View style={style.userDetail}>
+              <Image
+                source={{
+                  uri: userDecode.images ? userDecode.images : "https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg"
+                }}
+                style={style.userAvt}
+              />
+              <Text style={style.userName} >{userDecode.fullName}</Text>
+            </View>
           )}
         </LinearGradient>
         <Image
@@ -325,11 +334,22 @@ const style = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  userDetail :{
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+  },
   userName: {
-    marginHorizontal: 50,
     color: "white",
     fontWeight: 700,
     fontSize: 25
+  },
+  userAvt: {
+    width: WIDTH * 0.15,
+    height: WIDTH * 0.15,
+    borderRadius: 100,
+    overflow: "hidden",
+    marginHorizontal: 30,
   },
   banner: {
     width: WIDTH * 0.94,

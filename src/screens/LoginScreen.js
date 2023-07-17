@@ -99,7 +99,7 @@ const Login = () => {
         Don’t have an account?
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("SignupScreen", { navigation: navigation });
+            navigation.navigate("SignupScreen");
             console.log(navigation)
           }}
         >
@@ -202,7 +202,7 @@ const loginStyle = StyleSheet.create({
     backgroundColor: "#F8F8FF"
   },
   noAcount: {
-    color: COLORS.green,
+    color: COLORS.lightGreen,
     fontSize: 18,
   },
   signup: {

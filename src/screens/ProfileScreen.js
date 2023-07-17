@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
 import { AuthContext } from "../context/authContext";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import COLORS from "../constants/colors";
@@ -24,13 +25,22 @@ const ProfileScreen = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       {userDecode ? (
         <View style={styles.profileContainer}>
-          <View style={styles.headerProfile}>
+          <LinearGradient
+            colors={['#fff', '#17B3A6']}
+            start={{
+              x: 0.5,
+              y: 0
+            }}
+            end={{
+              x: 1,
+              y: 1
+            }} style={styles.headerProfile}>
             <Image
               source={{ uri: userDecode.imgUrl }}
               style={styles.profileImage}
             />
             <Text style={styles.fullNameText}>{userDecode.fullName}</Text>
-          </View>
+          </LinearGradient>
           <View style={styles.mainProfile}>
             {MAIN_PROFILE_LIST.map((profile, index) => (
               <TouchableOpacity

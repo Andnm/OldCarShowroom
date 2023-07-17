@@ -46,11 +46,11 @@ const Detail = ({ navigation, route }) => {
         setBottomSheetVisible(true);
     };
 
-    const handldeReloadData = (car) =>{
+    const handldeReloadData = (car) => {
         navigation.reset({
             index: 0,
-            routes: [{ name: 'Detail', params: { car: car }}],
-          });
+            routes: [{ name: 'Detail', params: { car: car } }],
+        });
     }
 
     const handleFavorite = () => {
@@ -78,7 +78,7 @@ const Detail = ({ navigation, route }) => {
         return (
             <View style={style.characteristicIcon}>
                 <Icon name={icon} color={"black"} size={40} />
-                <Text>{name}</Text>
+                <Text style={{fontSize:10}} >{name}</Text>
             </View>
         )
     }
@@ -86,7 +86,7 @@ const Detail = ({ navigation, route }) => {
     const utilitiesIcon = (name, icon, key) => {
         return (
             <View style={style.utilitiesIcon} key={key}>
-                <Icon name={icon} color={"black"} size={40} />
+                <Icon name={icon} color={"black"} size={30} />
                 <Text style={{ marginHorizontal: 10 }}>{name}</Text>
             </View>
         )
@@ -103,7 +103,7 @@ const Detail = ({ navigation, route }) => {
             style={{ flex: 1, backgroundColor: COLORS.white }}
         >
             <ScrollView style={style.detailContainer} showsVerticalScrollIndicator={false}>
-                <View style={style.backButton}>
+                {/* <View style={style.backButton}>
                     <TouchableOpacity
                         style={style.headButton}
                         onPress={() => {
@@ -121,7 +121,24 @@ const Detail = ({ navigation, route }) => {
                     >
                         <Icon name={"dots-vertical"} color={"darkgray"} size={40} />
                     </TouchableOpacity>
+                </View> */}
+
+                <View style={style.header}>
+                    <Icon
+                        name="arrow-left"
+                        color={"white"}
+                        size={28}
+                        onPress={() => navigation.navigate("HomeScreen")}
+                    />
+                    <Text style={style.headerTitle}>{car.name}</Text>
+                    <Icon
+                        name="dots-horizontal"
+                        color={"white"}
+                        size={30}
+                        onPress={() => setBottomSheetVisible(true)}
+                    />
                 </View>
+
                 <ScrollView
                     style={style.slide}
                     horizontal
@@ -158,12 +175,12 @@ const Detail = ({ navigation, route }) => {
                     - {car.description}
                 </Text>
                 {line()}
-                <Text style={style.title}>utilities</Text>
+                <Text style={style.title}>Facilities</Text>
                 <View style={style.utilities}>
                     {facilitiesServices.map((item, key) => {
                         if (car.otherFacilities.includes(item.id)) {
                             return (
-                                utilitiesIcon(item.name, "home", key = item.id)
+                                utilitiesIcon(item.name, item.icon, key = item.id)
                             )
                         }
                     })}
@@ -311,6 +328,21 @@ const style = StyleSheet.create({
         flex: 1,
         position: "relative"
     },
+
+    header: {
+        paddingHorizontal: 20,
+        marginTop: 30,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        backgroundColor: "black",
+        paddingVertical: 20,
+    },
+    headerTitle: {
+        fontSize: 23,
+        fontWeight: "400",
+        color: "white",
+    },
+
     backButton: {
         position: "absolute",
         width: WIDTH,
@@ -370,7 +402,7 @@ const style = StyleSheet.create({
         alignItems: "center",
     },
     utilitiesIcon: {
-        width: 170,
+        width: 150,
         marginLeft: 15,
         marginVertical: 10,
         alignItems: "center",
