@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Dimensions,
 } from "react-native";
 import React, { useState, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -17,6 +18,9 @@ import twitter from "../assets/loginImage/twitter.png";
 import { AuthContext } from "../context/authContext";
 
 import SpinnerLoading from "./SpinnerLoading";
+
+const WIDTH = Dimensions.get('window').width
+const HEIGHT = Dimensions.get('window').height;
 
 const Login = () => {
   const { loginFunction, isLoading } = useContext(AuthContext);
@@ -38,7 +42,7 @@ const Login = () => {
     <View style={loginStyle.container}>
       <Text style={loginStyle.title}>Showroom</Text>
 
-      <Image style={loginStyle.carIcon} source={loginCar} />
+      <Image style={loginStyle.carIcon} source={loginCar} resizeMode="cover" />
 
       <View style={loginStyle.form}>
         <Text style={loginStyle.welcome}>Welcome back</Text>
@@ -59,7 +63,6 @@ const Login = () => {
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
           ></TextInput>
-
           {password && (
             <TouchableOpacity
               style={loginStyle.toggleButton}
@@ -72,6 +75,7 @@ const Login = () => {
               />
             </TouchableOpacity>
           )}
+
         </View>
         <TouchableOpacity style={loginStyle.button} onPress={handleLogin}>
           <Text style={loginStyle.buttonText}>Login</Text>
@@ -95,14 +99,15 @@ const Login = () => {
         Don’t have an account?
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("SignupScreen");
+            navigation.navigate("SignupScreen", { navigation: navigation });
+            console.log(navigation)
           }}
         >
           <Text style={loginStyle.signup}> Sign up</Text>
         </TouchableOpacity>
       </Text>
 
-      {isLoading && <SpinnerLoading/>}
+      {isLoading && <SpinnerLoading />}
     </View>
   );
 };
@@ -115,108 +120,96 @@ const loginStyle = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    color: "#17B3A6",
-    fontWeight: "700",
-    fontSize: 40,
-    fontStyle: "italic",
-    // fontFamily: "Nunito",
+    color: COLORS.green,
+    fontSize: 50,
+    fontWeight: 500,
   },
   carIcon: {
-    width: "45%",
-    height: "15%",
-    marginBottom: 25,
+    width: WIDTH * 0.5,
+    marginVertical: HEIGHT * 0.02
   },
   form: {
-    width: "80%",
-    height: "38%",
+    width: WIDTH,
+    height: HEIGHT * 0.3,
   },
   welcome: {
-    color: "#3A3A3A",
-    fontSize: 20,
-    fontWeight: "500",
+    fontSize: 25,
+    fontWeight: 500,
+    marginLeft: WIDTH * 0.1
+  },
+  label: {
+    alignSelf: 'flex-start',
+    color: "rgba(0,0,0,0.5)",
+    textAlign: "center",
+    transform: [{ translateY: HEIGHT * 0.01 }, { translateX: WIDTH * 0.15 }],
+    backgroundColor: "#F8F8FF",
+    zIndex: 999
   },
   inputView: {
     position: "relative",
-    width: "100%",
-    height: 50,
-    borderRadius: 15,
-    backgroundColor: "#F8F8FF",
-    shadowOpacity: 0.1,
-    boxShadow: "0 0 3.5px #7C7C8A",
-    marginTop: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    flexWrap: "wrap",
+    flexDirection: "row",
   },
   input: {
-    width: "90%",
-    height: "90%",
-    // outlineWidth: 0
-  },
-  label: {
-    position: "absolute",
-    color: "#7C7C8A",
-    padding: 5,
-    fontWeight: "500",
-    backgroundColor: "#F8F8FF",
-    top: "-30%",
-    left: 20,
-  },
-  button: {
-    width: "100%",
-    height: 50,
-    borderRadius: 15,
-    marginTop: 40,
-    backgroundColor: "#17B3A6",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "500",
-  },
-  socialText: {
-    color: "#7C7C8A",
-    padding: 5,
-    marginBottom: 15,
-    fontWeight: "500",
-    backgroundColor: "#F8F8FF",
-  },
-  socialPack: {
-    width: "70%",
-    height: 60,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  socialIcon: {
-    width: "21.5%",
-    height: "100%",
-    borderRadius: 15,
-    backgroundColor: "#F8F8FF",
-    shadowOpacity: 0.1,
-    boxShadow: "0 0 3.5px #7C7C8A",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  icon: {
-    width: "60%",
-    height: "60%",
-  },
-  noAcount: {
-    color: "#17B3A6",
-    fontWeight: "500",
-    marginTop: 50,
-  },
-  signup: {
-    color: "#7C7C8A",
-    fontWeight: "500",
+    borderWidth: 1,
+    width: WIDTH * 0.8,
+    height: HEIGHT * 0.05,
+    paddingHorizontal: WIDTH * 0.05,
+    marginHorizontal: WIDTH * 0.1,
+    borderRadius: 5,
+    borderColor: "rgba(0,0,0,0.5)"
   },
   toggleButton: {
     position: "absolute",
-    top: "25%",
-    right: 10,
-    zIndex: 1,
+    top: HEIGHT * 0.035,
+    right: WIDTH * 0.13
   },
+  button: {
+    width: WIDTH * 0.8,
+    height: HEIGHT * 0.06,
+    borderRadius: 5,
+    marginHorizontal: WIDTH * 0.1,
+    marginVertical: HEIGHT * 0.02,
+    backgroundColor: COLORS.green,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 25,
+    fontWeight: 500,
+  },
+  socialText: {
+    color: COLORS.green,
+    fontSize: 20,
+  },
+  socialPack: {
+    width: WIDTH * 0.8,
+    marginHorizontal: WIDTH * 0.1,
+    justifyContent: "space-around",
+    flexWrap: "wrap",
+    flexDirection: "row",
+  },
+  socialIcon: {
+    width: WIDTH * 0.15,
+    height: WIDTH * 0.15,
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: "rgba(0, 0, 0, 0.2)",
+    borderRadius: 5,
+    marginVertical: HEIGHT * 0.03,
+    backgroundColor: "#F8F8FF"
+  },
+  noAcount: {
+    color: COLORS.green,
+    fontSize: 18,
+  },
+  signup: {
+    color: COLORS.green,
+    fontSize: 20,
+    transform: [{translateY: WIDTH * 0.013}]
+  }
 });
 
 export default Login;

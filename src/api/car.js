@@ -12,7 +12,7 @@ const createAxiosInstance = (token) => {
 
 export const getCarList = async () => {
   try {
-    const response = await axios.get(`${LINK_API}` + "/cars");
+    const response = await axios.get(`${LINK_API}`+"/cars");
     return response.data;
   } catch (error) {
     console.error("Error fetching car list:", error);

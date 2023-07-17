@@ -1,19 +1,24 @@
-import { TouchableOpacity, Image, StyleSheet } from "react-native";
+import { TouchableOpacity, Image, StyleSheet, Dimensions } from "react-native";
 import React from 'react';
+import { useNavigation } from "@react-navigation/native";
 
-import BackArrow from "../assets/BackArrow.png"
+// import BackArrow from "../assets/BackArrow.png"
 
-const BackButton = ({ navigation }) => {
+const WIDTH = Dimensions.get('window').width
+const HEIGHT = Dimensions.get('window').height;
+
+const BackButton = () => {
+
+    const navigation = useNavigation();
+
     return (
         <TouchableOpacity
             style={styles.container}
-            onPress={() => {
-                navigation.goBack();
-            }}
+            onPress={() => {navigation.goBack()}}
         >
             <Image
                 style={styles.icon}
-                source={BackArrow}
+                source={require('../assets/BackArrow.png')}
             />
         </TouchableOpacity>
     )
@@ -22,8 +27,7 @@ const BackButton = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         position: "relative",
-        display: "fixed",
-        width: "100%",
+        width: WIDTH,
         height: 80,
         backgroundColer: "white",
         top: 0,
@@ -31,7 +35,7 @@ const styles = StyleSheet.create({
     icon: {
         position: "absolute",
         width: 50,
-        height: "50%",
+        height: 40,
         bottom: 0,
         left: 15,
     }

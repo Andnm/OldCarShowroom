@@ -10,6 +10,7 @@ import FavoriteCar from "../screens/Profile/FavoriteCar"
 import InfoAccount from "../screens/Profile/InfoAccount"
 import MyCar from "../screens/Profile/MyCar"
 import Gift from "../screens/Profile/Gift"
+import Detail from "../screens/DetailScreen";
 import RegisterCar from "../screens/Car/RegisterCar"
 
 const StackNavigator = () => {
@@ -24,6 +25,7 @@ const StackNavigator = () => {
       <Stack.Screen name="InfoAccount" component={InfoAccount} />
       <Stack.Screen name="MyCar" component={MyCar} />
       <Stack.Screen name="Gift" component={Gift} />
+      <Stack.Screen name="Detail" component={Detail} />
       <Stack.Screen name="RegisterCar" component={RegisterCar} />
 
     </Stack.Navigator>
