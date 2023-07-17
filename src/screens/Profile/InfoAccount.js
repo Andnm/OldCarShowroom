@@ -56,7 +56,7 @@ const InfoAccount = ({ navigation }) => {
         <View style={style.circle}>
           <Image
             source={{
-              uri: userDecode.imgUrl,
+              uri: userDecode.imgUrl ? userDecode.imgUrl : "https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg",
             }}
             style={style.imageProfile}
             resizeMode="cover"

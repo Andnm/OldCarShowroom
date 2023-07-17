@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Dimensions, SafeAreaView, TouchableWithoutFeedback, Modal } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { LinearGradient } from 'expo-linear-gradient';
 
 import COLORS from "../constants/colors";
-import { LinearGradient } from 'expo-linear-gradient';
 import { facilitiesServices } from "../constants/facilities";
 import { getCarList } from "../api/car";
+import CustomToast from "../components/CustomToast";
 
 const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height;
@@ -15,6 +16,7 @@ const Detail = ({ navigation, route }) => {
     const [car, setCar] = useState(route.params.car);
     const [carData, setCarData] = useState([]);
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+    const showToast = CustomToast();
 
     useEffect(() => {
         getData()
@@ -35,7 +37,8 @@ const Detail = ({ navigation, route }) => {
 
     const getData = async () => {
         const data = await getCarList()
-        setCarData(data)
+        const filterData = data.filter((item) => item.status === "Confirm");
+        setCarData(filterData)
     };
 
     const handleCloseBottomSheet = () => {
@@ -55,11 +58,11 @@ const Detail = ({ navigation, route }) => {
 
     const handleFavorite = () => {
         setCar({ ...car, favorite: !car.favorite })
-        // if (car.favorite) {
-        //     showToast("Add to favorite", "success")
-        // } else {
-        //     showToast("Remove to favorite", "success")
-        // }
+        if (car.favorite) {
+            showToast("Success", "Add to favorite", "success")
+        } else {
+            showToast("Fail", "Remove to favorite", "error")
+        }
     }
 
     function shortenPrice(price) {
@@ -78,7 +81,7 @@ const Detail = ({ navigation, route }) => {
         return (
             <View style={style.characteristicIcon}>
                 <Icon name={icon} color={"black"} size={40} />
-                <Text style={{fontSize:10}} >{name}</Text>
+                <Text style={{ fontSize: 13 }} >{name}</Text>
             </View>
         )
     }
@@ -102,42 +105,22 @@ const Detail = ({ navigation, route }) => {
         <SafeAreaView
             style={{ flex: 1, backgroundColor: COLORS.white }}
         >
+            <View style={style.header}>
+                <Icon
+                    name="arrow-left"
+                    color={"white"}
+                    size={28}
+                    onPress={() => navigation.navigate("HomeScreen")}
+                />
+                <Text style={style.headerTitle}>{car.name}</Text>
+                <Icon
+                    name="dots-vertical"
+                    color={"white"}
+                    size={30}
+                    onPress={() => setBottomSheetVisible(true)}
+                />
+            </View>
             <ScrollView style={style.detailContainer} showsVerticalScrollIndicator={false}>
-                {/* <View style={style.backButton}>
-                    <TouchableOpacity
-                        style={style.headButton}
-                        onPress={() => {
-                            navigation.navigate("HomeScreen")
-                        }}
-                    >
-                        <Icon name={"chevron-left"} color={"darkgray"} size={40} />
-                    </TouchableOpacity>
-                    <Text style={style.headName}>{car.name}</Text>
-                    <TouchableOpacity
-                        style={style.headButton}
-                        onPress={() => {
-                            handleOpenBottomSheet()
-                        }}
-                    >
-                        <Icon name={"dots-vertical"} color={"darkgray"} size={40} />
-                    </TouchableOpacity>
-                </View> */}
-
-                <View style={style.header}>
-                    <Icon
-                        name="arrow-left"
-                        color={"white"}
-                        size={28}
-                        onPress={() => navigation.navigate("HomeScreen")}
-                    />
-                    <Text style={style.headerTitle}>{car.name}</Text>
-                    <Icon
-                        name="dots-horizontal"
-                        color={"white"}
-                        size={30}
-                        onPress={() => setBottomSheetVisible(true)}
-                    />
-                </View>
 
                 <ScrollView
                     style={style.slide}
@@ -246,7 +229,7 @@ const Detail = ({ navigation, route }) => {
                             fontWeight: 500,
                         }}
                     >
-                        Order Car
+                        Booking
                     </Text>
                 </View>
             </TouchableOpacity>
@@ -328,8 +311,9 @@ const style = StyleSheet.create({
         flex: 1,
         position: "relative"
     },
-
     header: {
+        width: WIDTH,
+        height: 70,
         paddingHorizontal: 20,
         marginTop: 30,
         flexDirection: "row",
@@ -342,7 +326,6 @@ const style = StyleSheet.create({
         fontWeight: "400",
         color: "white",
     },
-
     backButton: {
         position: "absolute",
         width: WIDTH,
@@ -365,7 +348,7 @@ const style = StyleSheet.create({
     slide: {
         width: WIDTH,
         height: WIDTH * 0.6,
-        marginTop: HEIGHT * 0.095
+        marginTop: 10
     },
     imageSlide: {
         width: WIDTH,

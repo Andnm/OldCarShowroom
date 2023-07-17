@@ -28,15 +28,15 @@ const ProfileScreen = ({ navigation }) => {
           <LinearGradient
             colors={['#fff', '#17B3A6']}
             start={{
-              x: 0.5,
-              y: 0
+              x: 0,
+              y: 1
             }}
             end={{
-              x: 1,
-              y: 1
+              x: 0,
+              y: 0
             }} style={styles.headerProfile}>
             <Image
-              source={{ uri: userDecode.imgUrl }}
+              source={{ uri: userDecode.imgUrl ? userDecode.imgUrl : "https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg" }}
               style={styles.profileImage}
             />
             <Text style={styles.fullNameText}>{userDecode.fullName}</Text>

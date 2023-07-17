@@ -36,6 +36,7 @@ const CardItem = ({ navigation, car }) => {
         <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 5 }}>
           <Text style={{ fontSize: 13, color: COLORS.red }}>{shortenPrice(car.minPrice) + " - " + shortenPrice(car.maxPrice)} VND</Text>
         </View>
+        <Text style={style.transmission} >{car.transmission}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -52,6 +53,14 @@ const style = StyleSheet.create({
     padding: 15,
     borderWidth: 1,
   },
+  transmission:{
+    alignSelf: 'flex-start',
+    backgroundColor: COLORS.lightBlue,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    borderRadius: 15,
+    marginTop: 5,
+  }
 });
 
 export default CardItem;
