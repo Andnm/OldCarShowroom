@@ -19,3 +19,14 @@ export const getCarList = async () => {
     return [];
   }
 };
+
+export const registerNewCar = async (token, data) => {
+  try {
+    const instance = createAxiosInstance(token);
+    const response = await instance.post("/cars", data);
+    return response;
+  } catch (error) {
+    console.error("Error register new car:", error);
+    return error.response;
+  }
+};

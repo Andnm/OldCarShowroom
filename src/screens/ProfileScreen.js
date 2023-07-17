@@ -77,8 +77,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 4,
     borderColor: "#e5e5e5",
     paddingHorizontal: 10,
-    paddingVertical: 30,
-    backgroundImage: 'linear-gradient(to top, #fff 10%, #17B3A6)',
+    paddingTop: 50,
+    backgroundImage: "linear-gradient(to top, #fff 10%, #17B3A6)",
+    paddingBottom: 30,
   },
   profileImage: {
     width: 70,
@@ -145,6 +146,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 18,
   },
-}); 
+});
 
 export default ProfileScreen;
