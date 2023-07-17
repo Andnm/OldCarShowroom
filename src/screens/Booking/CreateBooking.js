@@ -9,7 +9,7 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
-import COLORS from "../constants/colors";
+import COLORS from "../../constants/colors";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { AuthContext } from "../../context/authContext";
 
