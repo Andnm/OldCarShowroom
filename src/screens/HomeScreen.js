@@ -138,7 +138,11 @@ const Home = ({ navigation }) => {
                 }}
                 style={style.userAvt}
               />
-              <Text style={style.userName} >{userDecode.fullName}</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Profile")}
+              >
+                <Text style={style.userName} >{userDecode.fullName}</Text>
+              </TouchableOpacity>
             </View>
           )}
         </LinearGradient>
@@ -350,11 +354,13 @@ const style = StyleSheet.create({
     color: "white",
     fontWeight: 700,
     fontSize: 25,
-    marginHorizontal: 20,
+    marginHorizontal: 15,
   },
   userAvt: {
-    width: WIDTH * 0.15,
-    height: WIDTH * 0.15,
+    width: WIDTH * 0.18,
+    height: WIDTH * 0.18,
+    borderWidth: 5,
+    borderColor: "white",
     borderRadius: 100,
     overflow: "hidden",
     marginLeft: 10,

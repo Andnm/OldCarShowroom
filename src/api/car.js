@@ -20,6 +20,16 @@ export const getCarList = async () => {
   }
 };
 
+export const getUserCarList = async (token) => {
+  try {
+      const instance = createAxiosInstance(token);
+      const response = await instance.get("/cars/user");
+      return response;
+  } catch (error) {
+      return error.response;
+  }
+};
+
 export const registerNewCar = async (token, data) => {
   try {
     const instance = createAxiosInstance(token);

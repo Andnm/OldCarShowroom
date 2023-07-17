@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Modal } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
+import COLORS from '../constants/colors';
 
 const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height;
@@ -11,7 +12,7 @@ const CustomToast = ({ title, message, type }) => {
     if (type === 'error') {
         backgroundColor = 'red';
     } else if (type === 'warning') {
-        backgroundColor = 'yellow';
+        backgroundColor = COLORS.orange;
     }
 
     return (
@@ -36,11 +37,11 @@ const styles = StyleSheet.create({
         // overflow: "hidden",
         zIndex: 9999,
     },
-    Line:{
+    Line: {
         position: "absolute",
         top: 0,
         bottom: 0,
-        left : 0,
+        left: 0,
         width: 10,
     },
     title: {
@@ -65,7 +66,7 @@ const useCustomToast = () => {
             {
                 type: type,
                 placement: 'top',
-                duration: 4000,
+                duration: 3000,
                 animationType: 'slide-in',
                 style: { backgroundColor: '' }
             }

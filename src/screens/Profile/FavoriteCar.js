@@ -1,27 +1,58 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   SafeAreaView,
   Image,
   Text,
   StyleSheet,
+  Dimensions,
   TouchableOpacity,
   Modal,
   TouchableWithoutFeedback,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import COLORS from "../../constants/colors";
+import CardItem from "../CardItem";
 import { AuthContext } from "../../context/authContext";
+import { getFavorCarList, deleteFavorCar, deleteAllFavorCar } from "../../api/favorite";
+import SpinnerLoading from "../SpinnerLoading";
+import ModalBox from "../../components/ModalBox";
+import CustomToast from "../../components/CustomToast";
+
+const WIDTH = Dimensions.get('window').width
+const HEIGHT = Dimensions.get('window').height;
 
 const FavoriteCar = ({ navigation }) => {
-  const { userDecode } = useContext(AuthContext);
+  const { accessToken, userDecode } = useContext(AuthContext);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [favorCar, setFavorCar] = useState([]);
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const [openModalFormRegisterCar, setOpenModalFormRegisterCar] =
     useState(false);
+  const showToast = CustomToast();
 
   const handleCloseBottomSheet = () => {
     setBottomSheetVisible(false);
   };
+
+  useEffect(() => {
+    getData()
+  }, [])
+
+  const getData = async () => {
+    const response = await getFavorCarList(accessToken)
+    response.status === 500 ? "" : setFavorCar(response.data)
+    setIsLoading(false)
+  }
+
+  const handleRemovePress = async () => {
+    await deleteAllFavorCar(accessToken)
+    showToast("Success", "Remove all car from favorite", "success");
+    setIsOpenModal(false)
+    setFavorCar([])
+    handleCloseBottomSheet()
+  }
 
   return (
     <SafeAreaView
@@ -45,18 +76,31 @@ const FavoriteCar = ({ navigation }) => {
           onPress={() => setBottomSheetVisible(true)}
         />
       </View>
+      {isLoading ?
+        <SpinnerLoading />
+        :
+        favorCar[0] ?
+          <View style={style.carList} >
+            {favorCar.map((item, key) => {
+              return <CardItem navigation={navigation} car={item} key={key} />;
+            })
+            }
+          </View>
+          :
+          <View>
+            <View style={style.textContainer}>
+              <Text style={style.titleText}>You have not favorite any car yet!</Text>
+            </View>
 
-      <View style={style.textContainer}>
-        <Text style={style.titleText}>You have not favorite any car yet!</Text>
-      </View>
-
-      <View style={style.body}>
-        <Image
-          source={require("../../assets/favorite-car.png")}
-          style={style.image}
-          resizeMode="cover"
-        />
-      </View>
+            <View style={style.body}>
+              <Image
+                source={require("../../assets/favorite-car.png")}
+                style={style.image}
+                resizeMode="cover"
+              />
+            </View>
+          </View>
+      }
 
       {/* <View style={style.buttonContainer}>
         <TouchableOpacity style={style.registerButton}>
@@ -64,7 +108,18 @@ const FavoriteCar = ({ navigation }) => {
         </TouchableOpacity>
       </View> */}
 
-      {/* <Modal
+      {isOpenModal && (
+        <ModalBox
+          open={isOpenModal}
+          bodyText={"Are you sure to remove all cars from favorite list?"}
+          actionClose={() => setIsOpenModal(false)}
+          actionYes={handleRemovePress}
+          nameNo={"Cancel"}
+          nameYes={"Confirm"}
+        />
+      )}
+
+      <Modal
         visible={bottomSheetVisible}
         animationType="fade"
         transparent={true}
@@ -75,19 +130,19 @@ const FavoriteCar = ({ navigation }) => {
             <View style={style.modalContent}>
               <Text style={style.modalTitle}>Tùy chỉnh</Text>
 
-              <TouchableOpacity style={style.modalOption}>
+              <TouchableOpacity style={style.modalOption} onPress={() => setIsOpenModal(true)}>
                 <Icon
                   name="car"
                   size={20}
                   color={COLORS.black}
                   style={style.icon}
                 />
-                <Text>Register to sell cars</Text>
+                <Text>Remove all Favortie cars</Text>
               </TouchableOpacity>
             </View>
           </View>
         </TouchableWithoutFeedback>
-      </Modal> */}
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -146,6 +201,14 @@ const style = StyleSheet.create({
     fontSize: 16,
     textTransform: "uppercase",
     textAlign: "center",
+  },
+  carList: {
+    width: WIDTH * 0.9,
+    marginHorizontal: WIDTH * 0.05,
+    marginTop: 30,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
 
   //bottom sheet

@@ -102,14 +102,15 @@ const styles = StyleSheet.create({
         backgroundColor: "#F8F8FF",
         shadowOpacity: 0.1,
         boxShadow: '0 0 3.5px #7C7C8A',
-        marginTop: 40,
+        marginTop: 20,
         justifyContent: "center",
         alignItems: "center",
     },
     input: {
         width: WIDTH * 0.8,
         height: HEIGHT * 0.05,
-        // borderWidth: 1,
+        paddingHorizontal: 10,
+        borderWidth: 1,
         borderColor: "rgba(0,0,0,0.3)",
         borderRadius: 5
         // outlineWidth: 0
