@@ -10,7 +10,7 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Image,
-  Platform,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import COLORS from "../../constants/colors";
@@ -23,9 +23,12 @@ import { fuelList } from "../../constants/fuel";
 import { modelList } from "../../constants/model";
 import { transmissionList } from "../../constants/transmission";
 import * as ExpoImagePicker from "expo-image-picker";
+import { firebase } from "../../config/firebaseConfig";
+import SpinnerLoading from "../SpinnerLoading";
+import { registerNewCar } from "../../api/car";
 
 const RegisterCar = ({ navigation }) => {
-  const { userDecode } = useContext(AuthContext);
+  const { accessToken, userDecode } = useContext(AuthContext);
   const [licensePlate, setLicensePlate] = useState("");
   const [description, setDescription] = useState("");
   const [autoMaker, setAutoMaker] = useState("");
@@ -46,6 +49,7 @@ const RegisterCar = ({ navigation }) => {
   const [modalCameraVisible, setModalCameraVisible] = useState(false);
 
   const [imageInUI, setImageInUI] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -56,13 +60,10 @@ const RegisterCar = ({ navigation }) => {
       quality: 1,
     });
 
-    if (!result.canceled) {
-      setImageInUI(result.assets[0].uri);
-    }
-
-    handleCloseModal()
+    const source = { uri: result.assets[0].uri };
+    setImageInUI(source);
+    handleCloseModalCamera();
   };
-
 
   const handleOpenModal = (field) => {
     setModalVisible(true);
@@ -120,29 +121,89 @@ const RegisterCar = ({ navigation }) => {
     setModalCameraVisible(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setIsLoading(true);
 
-    
-    const data = {
-      name: model + " " + yearOfManufacture,
-      licensePlate: licensePlate,
-      description: description,
-      autoMaker: autoMaker,
-      model: model,
-      category: category,
-      minPrice: minPrice,
-      maxPrice: maxPrice,
-      fuel: fuel,
-      transmission: transmission,
-      yearOfManufacture: yearOfManufacture,
-      otherFacilities: otherFacilities,
-      images: images,
-    };
+    try {
+      const response = await fetch(imageInUI.uri);
+      const blob = await response.blob();
+      const filename = imageInUI.uri.substring(
+        imageInUI.uri.lastIndexOf("/") + 1
+      );
+      var ref = firebase.storage().ref().child(filename);
+      await ref.put(blob);
+      const downloadURL = await ref.getDownloadURL();
+
+      const data = {
+        name: model + " " + yearOfManufacture,
+        licensePlate: licensePlate,
+        description: description,
+        autoMaker: autoMaker,
+        model: model,
+        category: category,
+        minPrice: Number(minPrice),
+        maxPrice: Number(maxPrice),
+        fuel: fuel,
+        transmission: transmission,
+        yearOfManufacture: Number(yearOfManufacture),
+        otherFacilities: otherFacilities,
+        images: [...images, downloadURL],
+      };
+
+      if (
+        !data.name ||
+        !data.licensePlate ||
+        !data.description ||
+        !data.autoMaker ||
+        !data.model ||
+        !data.category ||
+        !data.minPrice ||
+        !data.maxPrice ||
+        !data.fuel ||
+        !data.transmission ||
+        !data.yearOfManufacture ||
+        !data.otherFacilities ||
+        !data.images
+      ) {
+        console.log("comehere");
+        Alert.alert("Error", "Vui lòng điền đầy đủ thông tin.");
+        return;
+      } else {
+        console.log("abc");
+        const responseRegisterCar = await registerNewCar(accessToken, data);
+        if (
+          responseRegisterCar.status === 201 ||
+          responseRegisterCar.status === 200
+        ) {
+          Alert.alert("Register successfully!!");
+        }else {
+          Alert.alert("Register thất bại!! " + responseRegisterCar.message);
+        }
+      }
+
+      setIsLoading(false);
+      setImageInUI(null);
+      setLicensePlate("")
+      setDescription("")
+      setAutoMaker("");
+      setModel("");
+      setCategory("");
+      setMinPrice("");
+      setMaxPrice("");
+      setFuel("");
+      setTransmission("");
+      setYearOfManufacture("");
+      setOtherFacilities([]);
+      setImages([])
+    } catch (error) {
+      setIsLoading(false);
+      Alert.alert("Error", "Vui lòng điền đầy đủ thông tin.");
+    }
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
-      {/* <View style={styles.header}>
+      <View style={styles.header}>
         <Icon
           name="arrow-left"
           color={"white"}
@@ -151,7 +212,7 @@ const RegisterCar = ({ navigation }) => {
         />
         <Text style={styles.headerTitle}>Register Car</Text>
         <Text style={styles.headerTitle}></Text>
-      </View> */}
+      </View>
 
       <ScrollView style={styles.container}>
         {/* license plate */}
@@ -287,8 +348,9 @@ const RegisterCar = ({ navigation }) => {
             <Text style={styles.modalButtonText}>Upload Image</Text>
             {imageInUI && (
               <Image
-                source={{ uri: imageInUI }}
-                style={{ width: 200, height: 200, flex: 1 }}
+                source={{ uri: imageInUI.uri }}
+                style={{ width: "auto", height: 200, flex: 1 }}
+                resizeMode="contain"
               />
             )}
           </TouchableOpacity>
@@ -405,7 +467,10 @@ const RegisterCar = ({ navigation }) => {
                   <Text>Open Camera</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.modalOption} onPress={pickImage}>
+                <TouchableOpacity
+                  style={styles.modalOption}
+                  onPress={pickImage}
+                >
                   <Icon
                     name="image-edit-outline"
                     size={20}
@@ -418,6 +483,8 @@ const RegisterCar = ({ navigation }) => {
           </TouchableWithoutFeedback>
         </Modal>
       </ScrollView>
+
+      {isLoading && <SpinnerLoading />}
     </SafeAreaView>
   );
 };
@@ -518,6 +585,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     justifyContent: "center",
     marginBottom: 10,
+    paddingVertical: 10,
   },
   modalButtonText: {
     fontSize: 14,

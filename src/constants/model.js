@@ -22,7 +22,23 @@ export const modelList = [
     model: [
       {
         id: 1,
-        name: "AUDI A6",
+        name: "KIA RIO",
+      },
+      {
+        id: 2,
+        name: "KIA K3",
+      },
+      {
+        id: 1,
+        name: "KIA MORNING",
+      },
+      {
+        id: 1,
+        name: "KIA SOLUTO",
+      },
+      {
+        id: 1,
+        name: "KIA SORENTO",
       },
     ],
   },
