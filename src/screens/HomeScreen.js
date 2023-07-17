@@ -74,15 +74,15 @@ const placeData = [
   },
 ]
 
-const Home = ({navigation}) => {
+const Home = ({ navigation }) => {
 
   const [title, setTitle] = useState('');
   const [carData, setCarData] = useState([]);
   const { accessToken, userDecode } = useContext(AuthContext);
-  
+
   useEffect(() => {
     getTime()
-  },[])
+  }, [])
 
   const getTime = async () => {
     const currentHour = new Date().getHours();
@@ -290,9 +290,20 @@ const Home = ({navigation}) => {
           </Text>
         </View>
         <View style={style.carList} >
-          {carData.map((item, key) => {
-            return <CardItem navigation={navigation} car={item} key={key} />;
-          })}
+          {carData[0] ?
+            carData.map((item, key) => {
+              return <CardItem navigation={navigation} car={item} key={key} />;
+            })
+            :
+            <Text
+              style={{
+                width: WIDTH * 0.9,
+                fontSize: 20,
+                textAlign: "center",
+              }}
+            >Showroom doesn't have any car yet!
+            </Text>
+          }
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -312,7 +323,7 @@ const style = StyleSheet.create({
     marginTop: 30,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
   },
   userName: {
     marginHorizontal: 50,

@@ -1,13 +1,20 @@
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import React from 'react';
 
+import { useNavigation } from "@react-navigation/native";
 import BackButton from "../components/BackButton";
 import signupCar from "../assets/signupImage/signupCar.png"
 
-const Signup = ({ navigation }) => {
+const WIDTH = Dimensions.get('window').width
+const HEIGHT = Dimensions.get('window').height;
+
+const Signup = () => {
+
+    const navigation = useNavigation();
+
     return (
         <View style={styles.container}>
-            <BackButton navigation={navigation} />
+            <BackButton/>
             <View style={styles.content}>
 
                 <Text style={styles.title}>
@@ -68,12 +75,12 @@ const styles = StyleSheet.create({
         // fontFamily: "Nunito",
     },
     carIcon: {
-        width: "45%",
+        width: WIDTH* 0.45,
         height: "15%",
         marginBottom: 25,
     },
     form: {
-        width: "80%",
+        width: WIDTH* 0.8,
         height: "38%",
     },
     welcome: {
@@ -83,7 +90,7 @@ const styles = StyleSheet.create({
     },
     inputView: {
         position: "relative",
-        width: "100%",
+        width: WIDTH* 0.8,
         height: 50,
         borderRadius: 15,
         backgroundColor: "#F8F8FF",
@@ -94,24 +101,29 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     input: {
-        width: "90%",
-        height: "90%",
+        width: WIDTH * 0.8,
+        height: HEIGHT * 0.05,
+        borderWidth: 1,
+        borderColor: "rgba(0,0,0,0.3)",
+        borderRadius : 5
         // outlineWidth: 0
     },
     label: {
         position: "absolute",
+        alignSelf: 'flex-start',
         color: "#7C7C8A",
         padding: 5,
         fontWeight: 500,
         backgroundColor: "#F8F8FF",
-        top: "-30%",
+        top: -13,
         left: 20,
+        zIndex: 999,
     },
     button: {
-        width: "100%",
+        width: WIDTH * 0.8,
         height: 50,
         borderRadius: 15,
-        marginTop: 40,
+        marginVertical: 50,
         backgroundColor: "#19779B",
         justifyContent: "center",
         alignItems: "center",

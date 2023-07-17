@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Dimensions, SafeAreaView, TouchableWithoutFeedback, Modal } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
 import COLORS from "../constants/colors";
 import { LinearGradient } from 'expo-linear-gradient';
 import { facilitiesServices } from "../constants/facilities";
@@ -19,6 +20,19 @@ const Detail = ({ navigation, route }) => {
         getData()
     }, [])
 
+    // const showToast = (message, type) => {
+    //     toast.show(message, {
+    //         type: type,
+    //         placement: "top",
+    //         duration: 3000,
+    //         animationType: "slide-in",
+    //         // style: {
+    //         //     width: WIDTH * 0.9,
+    //         //     height: 200
+    //         // }
+    //     });
+    // };
+
     const getData = async () => {
         const data = await getCarList()
         setCarData(data)
@@ -32,8 +46,20 @@ const Detail = ({ navigation, route }) => {
         setBottomSheetVisible(true);
     };
 
+    const handldeReloadData = (car) =>{
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Detail', params: { car: car }}],
+          });
+    }
+
     const handleFavorite = () => {
         setCar({ ...car, favorite: !car.favorite })
+        // if (car.favorite) {
+        //     showToast("Add to favorite", "success")
+        // } else {
+        //     showToast("Remove to favorite", "success")
+        // }
     }
 
     function shortenPrice(price) {
@@ -59,7 +85,7 @@ const Detail = ({ navigation, route }) => {
 
     const utilitiesIcon = (name, icon, key) => {
         return (
-            <View style={style.utilitiesIcon} key= {key}>
+            <View style={style.utilitiesIcon} key={key}>
                 <Icon name={icon} color={"black"} size={40} />
                 <Text style={{ marginHorizontal: 10 }}>{name}</Text>
             </View>
@@ -81,7 +107,7 @@ const Detail = ({ navigation, route }) => {
                     <TouchableOpacity
                         style={style.headButton}
                         onPress={() => {
-                            navigation.goBack()
+                            navigation.navigate("HomeScreen")
                         }}
                     >
                         <Icon name={"chevron-left"} color={"darkgray"} size={40} />
@@ -137,7 +163,7 @@ const Detail = ({ navigation, route }) => {
                     {facilitiesServices.map((item, key) => {
                         if (car.otherFacilities.includes(item.id)) {
                             return (
-                                utilitiesIcon(item.name, "home", key=item.id)
+                                utilitiesIcon(item.name, "home", key = item.id)
                             )
                         }
                     })}
@@ -152,7 +178,11 @@ const Detail = ({ navigation, route }) => {
                     {carData ? carData.map((item, key) => {
                         return (
                             item._id !== car._id ?
-                                <TouchableOpacity key={key} style={style.related}>
+                                <TouchableOpacity
+                                    key={key}
+                                    style={style.related}
+                                    onPress={() => handldeReloadData(item)}
+                                >
                                     <LinearGradient
                                         colors={['rgba(0, 0, 0, 0.7)', 'rgba(0, 0, 0, 0)']}
                                         start={{
@@ -228,7 +258,7 @@ const Detail = ({ navigation, route }) => {
                                         color={COLORS.black}
                                         style={style.icon}
                                     />
-                                    <Text>Add to favorite</Text>
+                                    <Text>Add To Favorite</Text>
                                 </TouchableOpacity>
                                 :
                                 <TouchableOpacity
@@ -243,7 +273,7 @@ const Detail = ({ navigation, route }) => {
                                         color={COLORS.red}
                                         style={style.icon}
                                     />
-                                    <Text>Add to favorite</Text>
+                                    <Text>Remove From Favorite</Text>
                                 </TouchableOpacity>
                             }
 
@@ -256,7 +286,7 @@ const Detail = ({ navigation, route }) => {
                                     color={COLORS.black}
                                     style={style.icon}
                                 />
-                                <Text>Change avatar</Text>
+                                <Text>Share With Friend</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity style={style.modalOption}>
@@ -266,7 +296,7 @@ const Detail = ({ navigation, route }) => {
                                     color={COLORS.black}
                                     style={style.icon}
                                 />
-                                <Text>Change password</Text>
+                                <Text>Report</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -348,6 +378,7 @@ const style = StyleSheet.create({
     },
     descrip: {
         marginHorizontal: 20,
+        marginVertical: 10,
     },
     utilities: {
         width: WIDTH * 0.9,

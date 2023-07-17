@@ -6,6 +6,18 @@ const width = Dimensions.get("window").width / 2 - 30;
 
 const CardItem = ({ navigation, car }) => {
 
+  function shortenPrice(price) {
+    if (price >= 1000000000) {
+      return (price / 1000000000).toFixed(price % 1000000000 !== 0 ? 3 : 0) + "B";
+    } else if (price >= 1000000) {
+      return (price / 1000000).toFixed(price % 1000000 !== 0 ? 3 : 0) + "M";
+    } else if (price >= 1000) {
+      return (price / 1000).toFixed(price % 1000 !== 0 ? 1 : 0) + "K";
+    } else {
+      return price.toString();
+    }
+  }
+
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -22,10 +34,7 @@ const CardItem = ({ navigation, car }) => {
         </View>
         <Text style={{ fontWeight: "bold", fontSize: 17, marginTop: 10 }}>{car.name}</Text>
         <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 5 }}>
-          <Text style={{ fontSize: 19, fontWeight: "bold" }}>${car.minPrice}</Text>
-          <View style={{ height: 25, width: 25, backgroundColor: COLORS.green, borderRadius: 5, justifyContent: "center", alignItems: "center" }}>
-            <Text style={{ fontSize: 15, color: COLORS.white, fontWeight: "bold" }}>+</Text>
-          </View>
+          <Text style={{ fontSize: 17, fontWeight: "bold", color: COLORS.red }}>{shortenPrice(car.minPrice) + " - " + shortenPrice(car.maxPrice)} VND</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -34,7 +43,7 @@ const CardItem = ({ navigation, car }) => {
 
 const style = StyleSheet.create({
   card: {
-    height: 225,
+    height: 210,
     width,
     backgroundColor: COLORS.light,
     marginHorizontal: 2,
