@@ -13,7 +13,11 @@ export const modelList = [
     model: [
       {
         id: 1,
-        name: "AUDI A6",
+        name: "BMW 320i",
+      },
+      {
+        id: 2,
+        name: "BMW 530i",
       },
     ],
   },
@@ -29,15 +33,15 @@ export const modelList = [
         name: "KIA K3",
       },
       {
-        id: 1,
+        id: 3,
         name: "KIA MORNING",
       },
       {
-        id: 1,
+        id: 4,
         name: "KIA SOLUTO",
       },
       {
-        id: 1,
+        id: 5,
         name: "KIA SORENTO",
       },
     ],

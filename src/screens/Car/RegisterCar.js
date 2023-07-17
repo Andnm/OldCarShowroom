@@ -176,15 +176,16 @@ const RegisterCar = ({ navigation }) => {
           responseRegisterCar.status === 200
         ) {
           Alert.alert("Register successfully!!");
-        }else {
+          navigation.navigate('MyCar')
+        } else {
           Alert.alert("Register thất bại!! " + responseRegisterCar.message);
         }
       }
 
       setIsLoading(false);
       setImageInUI(null);
-      setLicensePlate("")
-      setDescription("")
+      setLicensePlate("");
+      setDescription("");
       setAutoMaker("");
       setModel("");
       setCategory("");
@@ -194,7 +195,7 @@ const RegisterCar = ({ navigation }) => {
       setTransmission("");
       setYearOfManufacture("");
       setOtherFacilities([]);
-      setImages([])
+      setImages([]);
     } catch (error) {
       setIsLoading(false);
       Alert.alert("Error", "Vui lòng điền đầy đủ thông tin.");
