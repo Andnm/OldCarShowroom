@@ -9,6 +9,8 @@ import {
   Modal,
   TouchableWithoutFeedback,
   ScrollView,
+  Image,
+  Platform,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import COLORS from "../../constants/colors";
@@ -20,6 +22,7 @@ import { facilitiesServices } from "../../constants/facilities";
 import { fuelList } from "../../constants/fuel";
 import { modelList } from "../../constants/model";
 import { transmissionList } from "../../constants/transmission";
+import * as ExpoImagePicker from "expo-image-picker";
 
 const RegisterCar = ({ navigation }) => {
   const { userDecode } = useContext(AuthContext);
@@ -39,6 +42,27 @@ const RegisterCar = ({ navigation }) => {
   const [modalField, setModalField] = useState("");
 
   const [otherFacilitiesValue, setOtherFacilitiesValue] = useState([]);
+
+  const [modalCameraVisible, setModalCameraVisible] = useState(false);
+
+  const [imageInUI, setImageInUI] = useState(null);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ExpoImagePicker.launchImageLibraryAsync({
+      mediaTypes: ExpoImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImageInUI(result.assets[0].uri);
+    }
+
+    handleCloseModal()
+  };
+
 
   const handleOpenModal = (field) => {
     setModalVisible(true);
@@ -88,7 +112,17 @@ const RegisterCar = ({ navigation }) => {
     handleCloseModal();
   };
 
+  const handleOpenModalCamera = () => {
+    setModalCameraVisible(true);
+  };
+
+  const handleCloseModalCamera = () => {
+    setModalCameraVisible(false);
+  };
+
   const handleSubmit = () => {
+
+    
     const data = {
       name: model + " " + yearOfManufacture,
       licensePlate: licensePlate,
@@ -108,7 +142,7 @@ const RegisterCar = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Icon
           name="arrow-left"
           color={"white"}
@@ -117,7 +151,7 @@ const RegisterCar = ({ navigation }) => {
         />
         <Text style={styles.headerTitle}>Register Car</Text>
         <Text style={styles.headerTitle}></Text>
-      </View>
+      </View> */}
 
       <ScrollView style={styles.container}>
         {/* license plate */}
@@ -244,6 +278,22 @@ const RegisterCar = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         {/* Upload images */}
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>Images</Text>
+          <TouchableOpacity
+            style={styles.imageContainer}
+            onPress={() => handleOpenModalCamera()}
+          >
+            <Text style={styles.modalButtonText}>Upload Image</Text>
+            {imageInUI && (
+              <Image
+                source={{ uri: imageInUI }}
+                style={{ width: 200, height: 200, flex: 1 }}
+              />
+            )}
+          </TouchableOpacity>
+        </View>
+
         {/* submit */}
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>Submit</Text>
@@ -331,6 +381,38 @@ const RegisterCar = ({ navigation }) => {
                       <Text>{option.name}</Text>
                     </TouchableOpacity>
                   ))}
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+
+        {/* Modal camera */}
+        <Modal
+          visible={modalCameraVisible}
+          animationType="fade"
+          transparent={true}
+          onRequestClose={handleCloseModalCamera}
+        >
+          <TouchableWithoutFeedback onPress={handleCloseModalCamera}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <TouchableOpacity style={styles.modalOption}>
+                  <Icon
+                    name="camera-plus-outline"
+                    size={20}
+                    color={COLORS.black}
+                  />
+                  <Text>Open Camera</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.modalOption} onPress={pickImage}>
+                  <Icon
+                    name="image-edit-outline"
+                    size={20}
+                    color={COLORS.black}
+                  />
+                  <Text>Open Gallery</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </TouchableWithoutFeedback>
@@ -426,6 +508,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     height: 40,
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  imageContainer: {
+    borderWidth: 1,
+    borderColor: COLORS.lightGray,
+    borderRadius: 8,
+    paddingHorizontal: 10,
     justifyContent: "center",
     marginBottom: 10,
   },

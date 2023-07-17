@@ -241,7 +241,7 @@ const style = StyleSheet.create({
     color: COLORS.gray,
     marginLeft: 45,
   },
-  //bottom sheet
+  //bottom sheet modal
   modalContainer: {
     flex: 1,
     justifyContent: "flex-end",
