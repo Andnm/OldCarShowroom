@@ -100,7 +100,6 @@ const Login = () => {
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("SignupScreen");
-            console.log(navigation)
           }}
         >
           <Text style={loginStyle.signup}> Sign up</Text>
@@ -166,7 +165,7 @@ const loginStyle = StyleSheet.create({
   },
   button: {
     width: WIDTH * 0.8,
-    height: HEIGHT * 0.06,
+    height: HEIGHT * 0.05,
     borderRadius: 5,
     marginHorizontal: WIDTH * 0.1,
     marginVertical: HEIGHT * 0.02,
@@ -176,29 +175,30 @@ const loginStyle = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: 500,
   },
   socialText: {
     color: COLORS.green,
-    fontSize: 20,
+    fontSize: 15,
   },
   socialPack: {
     width: WIDTH * 0.8,
     marginHorizontal: WIDTH * 0.1,
-    justifyContent: "space-around",
+    justifyContent: "center",
     flexWrap: "wrap",
     flexDirection: "row",
   },
   socialIcon: {
-    width: WIDTH * 0.15,
-    height: WIDTH * 0.15,
+    width: 60,
+    height: 60,
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
     borderColor: "rgba(0, 0, 0, 0.2)",
     borderRadius: 5,
     marginVertical: HEIGHT * 0.03,
+    marginHorizontal: 20,
     backgroundColor: "#F8F8FF"
   },
   noAcount: {
@@ -206,9 +206,10 @@ const loginStyle = StyleSheet.create({
     fontSize: 18,
   },
   signup: {
-    color: COLORS.green,
-    fontSize: 20,
-    transform: [{translateY: WIDTH * 0.013}]
+    color: "black",
+    fontSize: 18,
+    fontWeight: 500,
+    // transform: [{translateY: WIDTH * 0.013}]
   }
 });
 

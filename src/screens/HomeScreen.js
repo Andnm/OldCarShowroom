@@ -83,6 +83,7 @@ const Home = ({ navigation }) => {
 
   useEffect(() => {
     getTime()
+    getData()
   }, [])
 
   const getTime = async () => {
@@ -98,9 +99,13 @@ const Home = ({ navigation }) => {
     } else {
       setTitle('Good morning!')
     }
-    const data = await getCarList()
-    setCarData(data)
   };
+
+  const getData = async () => {
+    const data = await getCarList()
+    const filterData = data.filter((item) => item.status === "Confirm");
+    setCarData(filterData)
+  }
 
   return (
     <SafeAreaView
@@ -129,7 +134,7 @@ const Home = ({ navigation }) => {
             <View style={style.userDetail}>
               <Image
                 source={{
-                  uri: userDecode.images ? userDecode.images : "https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg"
+                  uri: userDecode.imgUrl ? userDecode.imgUrl : "https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg"
                 }}
                 style={style.userAvt}
               />
@@ -289,7 +294,10 @@ const Home = ({ navigation }) => {
           >
             Hãy đăng kí trở thành dối tác của chúng tôi để có cơ hội kiếm thêm thu nhập hàng tháng
           </Text>
-          <TouchableOpacity style={style.registrationButton}>
+          <TouchableOpacity
+            style={style.registrationButton}
+            onPress={() => navigation.navigate("RegisterCar")}
+          >
             <Text style={{ color: "white", fontSize: 18, textTransform: "uppercase", }}>SIGN UP NOW</Text>
           </TouchableOpacity>
         </ImageBackground>
@@ -327,14 +335,13 @@ const style = StyleSheet.create({
   },
   header: {
     width: WIDTH,
-    height: HEIGHT * 0.15,
-    paddingBottom: HEIGHT * 0.05,
-    marginTop: 30,
+    height: HEIGHT * 0.2,
+    // paddingBottom: HEIGHT * 0.05,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  userDetail :{
+  userDetail: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 10,
@@ -342,14 +349,15 @@ const style = StyleSheet.create({
   userName: {
     color: "white",
     fontWeight: 700,
-    fontSize: 25
+    fontSize: 25,
+    marginHorizontal: 20,
   },
   userAvt: {
     width: WIDTH * 0.15,
     height: WIDTH * 0.15,
     borderRadius: 100,
     overflow: "hidden",
-    marginHorizontal: 30,
+    marginLeft: 10,
   },
   banner: {
     width: WIDTH * 0.94,
@@ -451,7 +459,8 @@ const style = StyleSheet.create({
     color: "white",
     backgroundColor: "rgb(145,212,183)",
     alignItems: "center",
-    padding: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
     borderRadius: 5,
     marginHorizontal: 15,
     marginVertical: 15,

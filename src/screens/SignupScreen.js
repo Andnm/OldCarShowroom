@@ -14,7 +14,7 @@ const Signup = () => {
 
     return (
         <View style={styles.container}>
-            <BackButton/>
+            <BackButton />
             <View style={styles.content}>
 
                 <Text style={styles.title}>
@@ -27,8 +27,14 @@ const Signup = () => {
 
                 <View style={styles.form}>
                     <Text style={styles.welcome}>
-                       Create account
+                        Create account
                     </Text>
+                    <View style={styles.inputView}>
+                        <Text style={styles.label}>
+                            Full Name
+                        </Text>
+                        <TextInput style={styles.input}></TextInput>
+                    </View>
                     <View style={styles.inputView}>
                         <Text style={styles.label}>
                             Email
@@ -43,7 +49,7 @@ const Signup = () => {
                     </View>
                     <View style={styles.inputView}>
                         <Text style={styles.label}>
-                            Confirm password
+                            Confirm Password
                         </Text>
                         <TextInput style={styles.input}></TextInput>
                     </View>
@@ -75,12 +81,12 @@ const styles = StyleSheet.create({
         // fontFamily: "Nunito",
     },
     carIcon: {
-        width: WIDTH* 0.45,
+        width: WIDTH * 0.45,
         height: "15%",
         marginBottom: 25,
     },
     form: {
-        width: WIDTH* 0.8,
+        width: WIDTH * 0.8,
         height: "38%",
     },
     welcome: {
@@ -90,7 +96,7 @@ const styles = StyleSheet.create({
     },
     inputView: {
         position: "relative",
-        width: WIDTH* 0.8,
+        width: WIDTH * 0.8,
         height: 50,
         borderRadius: 15,
         backgroundColor: "#F8F8FF",
@@ -103,9 +109,9 @@ const styles = StyleSheet.create({
     input: {
         width: WIDTH * 0.8,
         height: HEIGHT * 0.05,
-        borderWidth: 1,
+        // borderWidth: 1,
         borderColor: "rgba(0,0,0,0.3)",
-        borderRadius : 5
+        borderRadius: 5
         // outlineWidth: 0
     },
     label: {
