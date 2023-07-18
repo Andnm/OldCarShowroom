@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Dimensions, SafeAreaView, TouchableWithoutFeedback, Modal } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,14 +7,19 @@ import COLORS from "../constants/colors";
 import { facilitiesServices } from "../constants/facilities";
 import { getCarList } from "../api/car";
 import CustomToast from "../components/CustomToast";
+import { AuthContext } from "../context/authContext";
+import { getFavorCarList, addFavorCar, deleteFavorCar } from "../api/favorite"
 
 const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height;
 
 const Detail = ({ navigation, route }) => {
 
+    const { accessToken, userDecode } = useContext(AuthContext);
     const [car, setCar] = useState(route.params.car);
     const [carData, setCarData] = useState([]);
+    const [favorCar, setFavorCar] = useState([]);
+    const [favor, setFavor] = useState();
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
     const showToast = CustomToast();
 
@@ -22,23 +27,20 @@ const Detail = ({ navigation, route }) => {
         getData()
     }, [])
 
-    // const showToast = (message, type) => {
-    //     toast.show(message, {
-    //         type: type,
-    //         placement: "top",
-    //         duration: 3000,
-    //         animationType: "slide-in",
-    //         // style: {
-    //         //     width: WIDTH * 0.9,
-    //         //     height: 200
-    //         // }
-    //     });
-    // };
+    useEffect(() => {
+        setFavor(checkFavor(car.licensePlate))
+    }, [favorCar])
 
     const getData = async () => {
-        const data = await getCarList()
+        const data = await getCarList();
+        const response = await getFavorCarList(accessToken);
         const filterData = data.filter((item) => item.status === "Confirm");
-        setCarData(filterData)
+        let favorData = response.data;
+        if (response.status !== 401) {
+            favorData = favorData.map((obj) => obj.licensePlate);
+            setFavorCar(favorData);
+        }
+        setCarData(filterData);
     };
 
     const handleCloseBottomSheet = () => {
@@ -56,12 +58,26 @@ const Detail = ({ navigation, route }) => {
         });
     }
 
-    const handleFavorite = () => {
-        setCar({ ...car, favorite: !car.favorite })
-        if (car.favorite) {
-            showToast("Success", "Add to favorite", "success")
+    const handleFavorite = async () => {
+        if (!accessToken) {
+            showToast("Warning", "Please Login First", "warning");
         } else {
-            showToast("Fail", "Remove to favorite", "error")
+            if (!favor) {
+                await addFavorCar(accessToken, car.licensePlate);
+                setFavorCar([...favorCar, car.licensePlate]);
+                setFavor(true);
+                showToast("Success", "Add to favorite", "success");
+            } else {
+                await deleteFavorCar(accessToken, car.licensePlate);
+                let index = favorCar.indexOf(car.licensePlate);
+                if (index !== -1) {
+                    favorCar.splice(index, 1);
+                    setFavorCar([...favorCar]);
+                    setFavor(false);
+                }
+                showToast("Success", "Remove from favorite", "success");
+            }
+            setCar({ ...car, favorite: !car.favorite });
         }
     }
 
@@ -101,6 +117,10 @@ const Detail = ({ navigation, route }) => {
         )
     }
 
+    const checkFavor = (licensePlate) => {
+        return (favorCar.includes(licensePlate))
+    }
+
     return (
         <SafeAreaView
             style={{ flex: 1, backgroundColor: COLORS.white }}
@@ -121,7 +141,6 @@ const Detail = ({ navigation, route }) => {
                 />
             </View>
             <ScrollView style={style.detailContainer} showsVerticalScrollIndicator={false}>
-
                 <ScrollView
                     style={style.slide}
                     horizontal
@@ -245,7 +264,7 @@ const Detail = ({ navigation, route }) => {
                         <View style={style.modalContent}>
                             <Text style={style.modalTitle}>Tùy chỉnh</Text>
 
-                            {!car.favorite ?
+                            {!favor ?
                                 <TouchableOpacity
                                     style={style.modalOption}
                                     onPress={() => {
@@ -277,9 +296,12 @@ const Detail = ({ navigation, route }) => {
                                 </TouchableOpacity>
                             }
 
-
-
-                            <TouchableOpacity style={style.modalOption}>
+                            <TouchableOpacity
+                                style={style.modalOption}
+                                onPress={() => {
+                                    showToast("Warning", "Not support this feture", "waring")
+                                }}
+                            >
                                 <Icon
                                     name="share-variant-outline"
                                     size={20}
@@ -289,7 +311,12 @@ const Detail = ({ navigation, route }) => {
                                 <Text>Share With Friend</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={style.modalOption}>
+                            <TouchableOpacity
+                                style={style.modalOption}
+                                onPress={() => {
+                                    showToast("Warning", "Not support this feture", "waring")
+                                }}
+                            >
                                 <Icon
                                     name="alert-circle-outline"
                                     size={20}
@@ -490,7 +517,5 @@ const style = StyleSheet.create({
         marginRight: 10
     }
 });
-
-
 
 export default Detail

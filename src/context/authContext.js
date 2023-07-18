@@ -47,11 +47,13 @@ export default function AuthContextProvider({ children }) {
           saveTokenToStorage(resSignIn.data.accessToken);
           setIsLoading(false)
           navigation.navigate("Home")
+          return reqUser.status
         }
-
       }
+      setIsLoading(false)
+      return resSignIn.status
     } catch (error) {
-      console.log(error);
+      return error
     }
   };
 

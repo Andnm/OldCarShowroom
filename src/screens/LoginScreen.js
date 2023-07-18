@@ -16,6 +16,7 @@ import google from "../assets/loginImage/google.png";
 import facebook from "../assets/loginImage/facebook.png";
 import twitter from "../assets/loginImage/twitter.png";
 import { AuthContext } from "../context/authContext";
+import CustomToast from "../components/CustomToast";
 
 import SpinnerLoading from "./SpinnerLoading";
 
@@ -24,6 +25,7 @@ const HEIGHT = Dimensions.get('window').height;
 
 const Login = () => {
   const { loginFunction, isLoading } = useContext(AuthContext);
+  const showToast = CustomToast();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +37,10 @@ const Login = () => {
       email: email,
       password: password,
     };
-    loginFunction(inputUser);
+    const response = await loginFunction(inputUser);
+    if(!response) {
+      showToast("Error", "Email or password wrong", "error");
+    }
   };
 
   return (
@@ -190,8 +195,8 @@ const loginStyle = StyleSheet.create({
     flexDirection: "row",
   },
   socialIcon: {
-    width: 60,
-    height: 60,
+    width: 55,
+    height: 55,
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -209,7 +214,7 @@ const loginStyle = StyleSheet.create({
     color: "black",
     fontSize: 18,
     fontWeight: 500,
-    // transform: [{translateY: WIDTH * 0.013}]
+    transform: [{translateY: WIDTH * 0.013}]
   }
 });
 

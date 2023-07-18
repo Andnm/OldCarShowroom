@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   SafeAreaView,
@@ -14,7 +14,7 @@ import COLORS from "../../constants/colors";
 import { AuthContext } from "../../context/authContext";
 
 const MyCar = ({ navigation }) => {
-  const { userDecode } = useContext(AuthContext);
+  const { accessToken, userDecode } = useContext(AuthContext);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [openModalFormRegisterCar, setOpenModalFormRegisterCar] =
     useState(false);

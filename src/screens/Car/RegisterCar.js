@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   SafeAreaView,
@@ -26,6 +26,7 @@ import * as ExpoImagePicker from "expo-image-picker";
 import { firebase } from "../../config/firebaseConfig";
 import SpinnerLoading from "../SpinnerLoading";
 import { registerNewCar } from "../../api/car";
+import CustomToast from "../../components/CustomToast";
 
 const RegisterCar = ({ navigation }) => {
   const { accessToken, userDecode } = useContext(AuthContext);
@@ -50,6 +51,12 @@ const RegisterCar = ({ navigation }) => {
 
   const [imageInUI, setImageInUI] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const showToast = CustomToast();
+
+  useEffect(() => {
+    setModel("")
+  }, [autoMaker])
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -165,8 +172,7 @@ const RegisterCar = ({ navigation }) => {
         !data.otherFacilities ||
         !data.images
       ) {
-        console.log("comehere");
-        Alert.alert("Error", "Vui lòng điền đầy đủ thông tin.");
+        showToast("Error", "Please complete all information", "error");
         return;
       } else {
         console.log("abc");
@@ -175,10 +181,10 @@ const RegisterCar = ({ navigation }) => {
           responseRegisterCar.status === 201 ||
           responseRegisterCar.status === 200
         ) {
-          Alert.alert("Register successfully!!");
+          showToast("Success", "Register successfully!", "success");
           navigation.navigate('MyCar')
         } else {
-          Alert.alert("Register thất bại!! " + responseRegisterCar.message);
+          showToast("Error", "Register thất bại!! " + responseRegisterCar.message, "error");
         }
       }
 
@@ -198,7 +204,7 @@ const RegisterCar = ({ navigation }) => {
       setImages([]);
     } catch (error) {
       setIsLoading(false);
-      Alert.alert("Error", "Vui lòng điền đầy đủ thông tin.");
+      showToast("Error", "Please complete all information", "error");
     }
   };
 
@@ -358,7 +364,37 @@ const RegisterCar = ({ navigation }) => {
         </View>
 
         {/* submit */}
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <TouchableOpacity
+          style={[
+            styles.submitButton,
+            (
+              !licensePlate ||
+              !description ||
+              !autoMaker ||
+              !model ||
+              !category ||
+              !minPrice ||
+              !maxPrice ||
+              !fuel ||
+              !transmission ||
+              !yearOfManufacture ||
+              !otherFacilities) && styles.disabledButton
+          ]}
+          onPress={handleSubmit}
+          disabled={
+            !licensePlate ||
+            !description ||
+            !autoMaker ||
+            !model ||
+            !category ||
+            !minPrice ||
+            !maxPrice ||
+            !fuel ||
+            !transmission ||
+            !yearOfManufacture ||
+            !otherFacilities
+          }
+        >
           <Text style={styles.submitButtonText}>Submit</Text>
         </TouchableOpacity>
 
@@ -373,6 +409,14 @@ const RegisterCar = ({ navigation }) => {
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitle}>Choose {modalField}</Text>
+                <View style={styles.closeModal}>
+                  <Icon
+                    name="close"
+                    color={"black"}
+                    size={28}
+                    onPress={() => handleCloseModal()}
+                  />
+                </View>
                 {modalField === "autoMaker" &&
                   autoMakerList.map((option) => (
                     <TouchableOpacity
@@ -437,7 +481,7 @@ const RegisterCar = ({ navigation }) => {
                       style={[
                         styles.modalOption,
                         otherFacilities.includes(option.id) &&
-                          styles.modalOptionSelected,
+                        styles.modalOptionSelected,
                       ]}
                       onPress={() => handleSelectOption(option)}
                     >
@@ -486,7 +530,7 @@ const RegisterCar = ({ navigation }) => {
       </ScrollView>
 
       {isLoading && <SpinnerLoading />}
-    </SafeAreaView>
+    </SafeAreaView >
   );
 };
 
@@ -556,6 +600,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
+    position: "relative",
     backgroundColor: "white",
     padding: 16,
   },
@@ -604,6 +649,14 @@ const styles = StyleSheet.create({
   modalOptionSelected: {
     backgroundColor: "#e5e5e5",
   },
+  closeModal: {
+    position: "absolute",
+    right: 18,
+    top: 18,
+  },
+  disabledButton:{
+    backgroundColor: COLORS.lightGray
+  }
 });
 
 export default RegisterCar;

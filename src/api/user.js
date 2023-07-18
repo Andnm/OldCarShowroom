@@ -32,6 +32,23 @@ export const getUserByEmail = async (token, email) => {
   }
 };
 
+export const signUpNewUser = async (name, email, password) => {
+  try {
+    const data = {
+      fullName : name,
+      email : email,
+      password : password
+    }
+    const response = await axios.post(`${LINK_API}/auth/signup`, data);
+    // console.log(response);
+    return response;
+  } catch (error) {
+    console.error("Error sign up user :", error.response);
+    return [];
+  }
+};
+
+
 export const updateUserByEmail = async (token, email) => {
   try {
     const instance = createAxiosInstance(token);

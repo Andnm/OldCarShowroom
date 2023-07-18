@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   fullNameText: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: "bold",
   },
   mainProfile: {
