@@ -220,7 +220,7 @@ const Detail = ({ navigation, route }) => {
                     }
                 </ScrollView>
             </ScrollView>
-            <TouchableOpacity style={style.orderFeild} onPress={() => navigation.navigate('CreateBooking')}>
+            <TouchableOpacity style={style.orderFeild} onPress={() => navigation.navigate('CreateBooking', car)}>
                 <View style={style.orderButton}>
                     <Text
                         style={{
