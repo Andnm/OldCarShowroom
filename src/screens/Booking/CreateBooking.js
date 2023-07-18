@@ -17,11 +17,15 @@ import { slotList } from "../../constants/slot";
 import moment from "moment-timezone";
 import { getSlotByDateAndLicensePlate } from "../../api/slot";
 import SpinnerLoading from "../../screens/SpinnerLoading";
+import { createBooking } from "../../api/booking";
+import CustomToast from "../../components/CustomToast";
+import ModalBox from "../../components/ModalBox";
 
 const CreateBooking = ({ navigation, route }) => {
   const car = route.params;
   const carImages = car.images;
   const isFewImages = carImages.length <= 2;
+  const showToast = CustomToast();
 
   const { accessToken, userDecode } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,8 +35,11 @@ const CreateBooking = ({ navigation, route }) => {
 
   const [fullname, setFullname] = useState(userDecode?.fullName || "");
   const [phone, setPhone] = useState(userDecode?.phone || "");
+  const [dateToData, setDateToData] = useState("");
 
   const [date, setDate] = useState(new Date());
+
+  const [isOpenModalBox, setIsOpenModalBox] = useState(false);
 
   const handleCloseIconHeader = () => {
     navigation.goBack();
@@ -107,26 +114,20 @@ const CreateBooking = ({ navigation, route }) => {
       return null;
     }
 
-
-    const isStored = storedSlot && storedSlot.includes(slot.id);
-
     return (
       <TouchableOpacity
         key={slot.id}
         style={[
           styles.slotButton,
           isSelected && styles.selectedSlotButton,
-          isStored && styles.disabledSlotButton,
           { width: 100 },
         ]}
         onPress={() => handleSlotSelection(slot)}
-        disabled={isStored}
       >
         <Text
           style={[
             styles.slotButtonText,
             isSelected && styles.selectedSlotButtonText,
-            isStored && styles.disabledSlotButtonText,
           ]}
         >
           {slot.time}
@@ -173,7 +174,36 @@ const CreateBooking = ({ navigation, route }) => {
     const formattedDate = `${year}-${month.toString().padStart(2, "0")}-${date
       .toString()
       .padStart(2, "0")}`;
+
+    setDateToData(formattedDate);
     return formattedDate;
+  };
+
+  const handleCreateBooking = async () => {
+    setIsOpenModalBox(false);
+    setIsLoading(true);
+    const data = {
+      date: dateToData,
+      slot: selectedSlot,
+      licensePlate: car.licensePlate,
+    };
+    const response = await createBooking(accessToken, data);
+
+    if (response.status === 200 || response.status === 201) {
+      showToast("Success", "Create Booking Successfully!", "success");
+    } else {
+      showToast("Error", "Create Booking failed!", "error");
+    }
+    setIsLoading(false);
+  };
+
+  const checkInfo = () => {
+    if (fullname === "" || phone === "") {
+      showToast("Warning", "Please full fill information!", "warning");
+      return;
+    } else {
+      setIsOpenModalBox(true)
+    }
   };
 
   React.useEffect(() => {
@@ -183,8 +213,7 @@ const CreateBooking = ({ navigation, route }) => {
         car.licensePlate,
         getFullDate(selectedDate)
       );
-
-      setStoredSlot(response?.slotStored);
+      setStoredSlot(response);
       setIsLoading(false);
     };
     callAPI();
@@ -383,7 +412,18 @@ const CreateBooking = ({ navigation, route }) => {
         </View>
       </ScrollView>
 
-      <TouchableOpacity style={styles.createBookingButton}>
+      {isOpenModalBox && (
+        <ModalBox
+          open={isOpenModalBox}
+          bodyText={"Are you sure to create this booking?"}
+          actionClose={() => setIsOpenModalBox(false)}
+          actionYes={handleCreateBooking}
+          nameNo={"Cancel"}
+          nameYes={"Confirm"}
+        />
+      )}
+
+      <TouchableOpacity style={styles.createBookingButton} onPress={checkInfo}>
         <Text style={styles.createBookingButtonText}>Create Booking</Text>
       </TouchableOpacity>
 
@@ -535,8 +575,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     marginVertical: 12,
   },
-
-  //slot
   slotContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -560,12 +598,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   selectedSlotButtonText: {
-    color: COLORS.white,
-  },
-  disabledSlotButton: {
-    backgroundColor: COLORS.orange,
-  },
-  disabledSlotButtonText: {
     color: COLORS.white,
   },
 });

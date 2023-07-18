@@ -6,7 +6,7 @@ const ModalBox = (props) => {
   const { open, bodyText, actionClose, actionYes, nameNo, nameYes } = props;
 
   return (
-    <View style={styles.centeredView}>
+    <View>
       <Modal
         animationType="slide"
         transparent={true}
@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
   },
   modalView: {
     margin: 20,
