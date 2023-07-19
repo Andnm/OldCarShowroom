@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { LinearGradient } from 'expo-linear-gradient';
 import { AuthContext } from "../context/authContext";
+import { useFocusEffect } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Text, View, Image, SafeAreaView, TouchableOpacity, FlatList, ImageBackground, StyleSheet, ScrollView, Dimensions } from "react-native";
 import CardItem from "./CardItem";
@@ -80,11 +81,12 @@ const Home = ({ navigation }) => {
   const [carData, setCarData] = useState([]);
   const { accessToken, userDecode } = useContext(AuthContext);
 
-
-  useEffect(() => {
-    getTime()
-    getData()
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      getTime()
+      getData()
+    }, [])
+  );
 
   const getTime = async () => {
     const currentHour = new Date().getHours();
@@ -288,7 +290,7 @@ const Home = ({ navigation }) => {
             marginVertical: WIDTH * 0.02,
             marginHorizontal: 15,
           }}>
-            Bạn muốn cho thuê xe
+            You want to rent a car
           </Text>
           <Text style={{
             color: "white",
@@ -296,13 +298,13 @@ const Home = ({ navigation }) => {
             marginHorizontal: 15,
           }}
           >
-            Hãy đăng kí trở thành dối tác của chúng tôi để có cơ hội kiếm thêm thu nhập hàng tháng
+            Register to become our partner for the opportunity to earn additional monthly income
           </Text>
           <TouchableOpacity
             style={style.registrationButton}
             onPress={() => navigation.navigate("RegisterCar")}
           >
-            <Text style={{ color: "white", fontSize: 18, textTransform: "uppercase", }}>SIGN UP NOW</Text>
+            <Text style={{ color: "white", fontSize: 18, textTransform: "uppercase", }}>REGISTER NOW</Text>
           </TouchableOpacity>
         </ImageBackground>
         <View style={style.insurance}>

@@ -4,6 +4,7 @@ import {
   SafeAreaView,
   Image,
   Text,
+  ScrollView,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
@@ -76,31 +77,33 @@ const FavoriteCar = ({ navigation }) => {
           onPress={() => setBottomSheetVisible(true)}
         />
       </View>
-      {isLoading ?
-        <SpinnerLoading />
-        :
-        favorCar[0] ?
-          <View style={style.carList} >
-            {favorCar.map((item, key) => {
-              return <CardItem navigation={navigation} car={item} key={key} />;
-            })
-            }
-          </View>
+      <ScrollView style={style.container} showsVerticalScrollIndicator={false}>
+        {isLoading ?
+          <SpinnerLoading />
           :
-          <View>
-            <View style={style.textContainer}>
-              <Text style={style.titleText}>You have not favorite any car yet!</Text>
+          favorCar[0] ?
+            <View style={style.carList} >
+              {favorCar.map((item, key) => {
+                return <CardItem navigation={navigation} car={item} key={key} />;
+              })
+              }
             </View>
+            :
+            <View>
+              <View style={style.textContainer}>
+                <Text style={style.titleText}>You have not favorite any car yet!</Text>
+              </View>
 
-            <View style={style.body}>
-              <Image
-                source={require("../../assets/favorite-car.png")}
-                style={style.image}
-                resizeMode="cover"
-              />
+              <View style={style.body}>
+                <Image
+                  source={require("../../assets/favorite-car.png")}
+                  style={style.image}
+                  resizeMode="cover"
+                />
+              </View>
             </View>
-          </View>
-      }
+        }
+      </ScrollView>
 
       {/* <View style={style.buttonContainer}>
         <TouchableOpacity style={style.registerButton}>
@@ -209,6 +212,11 @@ const style = StyleSheet.create({
     justifyContent: "space-between",
     flexDirection: "row",
     flexWrap: "wrap",
+  },
+  container: {
+    flex: 1
+    // justifyContent: "center",
+    // alignItems: "center",
   },
 
   //bottom sheet

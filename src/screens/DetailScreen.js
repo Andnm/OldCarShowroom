@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
-
+import { useFocusEffect } from '@react-navigation/native';
 import COLORS from "../constants/colors";
 import { facilitiesServices } from "../constants/facilities";
 import { getCarList } from "../api/car";
@@ -35,24 +35,26 @@ const Detail = ({ navigation, route }) => {
 
   const showToast = CustomToast();
 
-  useEffect(() => {
-    getData();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      getData();
+    }, [])
+  );
 
   useEffect(() => {
     setFavor(checkFavor(car.licensePlate));
   }, [favorCar]);
 
   const getData = async () => {
-    const data = await getCarList();
+    const data = await getCarList()
     const response = await getFavorCarList(accessToken);
     const filterData = data.filter((item) => item.status === "Confirm");
     let favorData = response.data;
+    setCarData(filterData)
     if (response.status !== 401) {
       favorData = favorData.map((obj) => obj.licensePlate);
       setFavorCar(favorData);
     }
-    setCarData(filterData);
   };
 
   const handleCloseBottomSheet = () => {
@@ -75,21 +77,30 @@ const Detail = ({ navigation, route }) => {
       showToast("Warning", "Please Login First", "warning");
     } else {
       if (!favor) {
-        await addFavorCar(accessToken, car.licensePlate);
-        setFavorCar([...favorCar, car.licensePlate]);
-        setFavor(true);
-        showToast("Success", "Add to favorite", "success");
-      } else {
-        await deleteFavorCar(accessToken, car.licensePlate);
-        let index = favorCar.indexOf(car.licensePlate);
-        if (index !== -1) {
-          favorCar.splice(index, 1);
-          setFavorCar([...favorCar]);
-          setFavor(false);
+        const response = await addFavorCar(accessToken, car.licensePlate);
+        if (response.status !== 401) {
+          setFavorCar([...favorCar, car.licensePlate]);
+          setFavor(true);
+          setCar({ ...car, favorite: !car.favorite });
+          showToast("Success", "Add to favorite", "success");
+        } else {
+          showToast("Error", "Action Fail", "error");
         }
-        showToast("Success", "Remove from favorite", "success");
+      } else {
+        const response = await deleteFavorCar(accessToken, car.licensePlate);
+        if (response.status !== 401) {
+          let index = favorCar.indexOf(car.licensePlate);
+          if (index !== -1) {
+            favorCar.splice(index, 1);
+            setFavorCar([...favorCar]);
+            setFavor(false);
+          }
+          setCar({ ...car, favorite: !car.favorite });
+          showToast("Success", "Remove from favorite", "success");
+        } else {
+          showToast("Error", "Action Fail", "error");
+        }
       }
-      setCar({ ...car, favorite: !car.favorite });
     }
   };
 
@@ -135,7 +146,7 @@ const Detail = ({ navigation, route }) => {
 
   const handleNavigationToBooking = () => {
     if (!accessToken) {
-        showToast("Warning", "You need to login first", "warning")
+      showToast("Warning", "You need to login first", "warning")
     } else {
       navigation.navigate("CreateBooking", car);
     }
@@ -182,10 +193,42 @@ const Detail = ({ navigation, route }) => {
             );
           })}
         </ScrollView>
-        <Text style={style.name}>{car.name}</Text>
-        <Text style={style.price}>
-          {shortenPrice(car.minPrice)} - {shortenPrice(car.maxPrice)} VND{" "}
-        </Text>
+        <View style={style.main}>
+          <>
+            <Text style={style.name}>{car.name}</Text>
+            <Text style={style.price}>
+              {shortenPrice(car.minPrice)} - {shortenPrice(car.maxPrice)} VND{" "}
+            </Text>
+          </>
+
+          {!favor ? (
+            <TouchableOpacity
+              style={style.favorIcon}
+              onPress={() => {
+                handleFavorite();
+              }}
+            >
+              <Icon
+                name="cards-heart-outline"
+                size={30}
+                color={COLORS.black}
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={style.favorIcon}
+              onPress={() => {
+                handleFavorite();
+              }}
+            >
+              <Icon
+                name="cards-heart"
+                size={30}
+                color={COLORS.red}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
         {line()}
         <Text style={style.title}>characteristic</Text>
         <View style={style.characteristic}>
@@ -213,7 +256,7 @@ const Detail = ({ navigation, route }) => {
           horizontal
           showsHorizontalScrollIndicator={false}
         >
-          {carData ? (
+          {carData[0] ? (
             carData.map((item, key) => {
               return item._id !== car._id ? (
                 <TouchableOpacity
@@ -261,26 +304,26 @@ const Detail = ({ navigation, route }) => {
         </ScrollView>
       </ScrollView>
       <TouchableOpacity
-      style={style.orderFeild}
-      onPress={handleNavigationToBooking}
-    >
-      <View
-        style={[
-          style.orderButton,
-          disableButton && { opacity: 0.5 } // Set opacity to 0.5 when button is disabled
-        ]}
+        style={style.orderFeild}
+        onPress={handleNavigationToBooking}
       >
-        <Text
-          style={{
-            color: "white",
-            fontSize: 25,
-            fontWeight: 500,
-          }}
+        <View
+          style={[
+            style.orderButton,
+            disableButton && { opacity: 0.5 }
+          ]}
         >
-          Booking
-        </Text>
-      </View>
-    </TouchableOpacity>
+          <Text
+            style={{
+              color: "white",
+              fontSize: 25,
+              fontWeight: 500,
+            }}
+          >
+            Booking
+          </Text>
+        </View>
+      </TouchableOpacity>
 
       <Modal
         visible={bottomSheetVisible}
@@ -409,6 +452,18 @@ const style = StyleSheet.create({
   imageSlide: {
     width: WIDTH,
     height: WIDTH * 0.6,
+  },
+  main: {
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  favorIcon:{
+    transform:[{translateY: -15}, {translateX: -15}],
+    padding: 5,
+    borderRadius: 50,
+    // backgroundColor: COLORS.lightGray,
   },
   name: {
     fontSize: 25,
