@@ -95,7 +95,7 @@ const ManagerCar = ({ navigation }) => {
         <View style={styles.userDetail}>
           <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
             <Text style={styles.userName}>
-              {title} {userDecode.fullName} {"!"}
+              {title} {userDecode?.fullName} {"!"}
             </Text>
           </TouchableOpacity>
         </View>

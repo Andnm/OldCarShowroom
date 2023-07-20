@@ -209,10 +209,6 @@ const CarDetails = ({ navigation, route }) => {
 };
 
 const style = StyleSheet.create({
-  detailContainer: {
-    flex: 1,
-    position: "relative",
-  },
   header: {
     width: WIDTH,
     height: 70,
@@ -227,25 +223,6 @@ const style = StyleSheet.create({
     fontSize: 23,
     fontWeight: "400",
     color: "white",
-  },
-  backButton: {
-    position: "absolute",
-    width: WIDTH,
-    height: HEIGHT * 0.06,
-    borderWidth: 1,
-    top: HEIGHT * 0.03,
-    backgroundColor: "#000000",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexDirection: "row",
-  },
-  headButton: {
-    marginHorizontal: 10,
-  },
-  headName: {
-    color: "white",
-    textTransform: "uppercase",
-    fontSize: 20,
   },
   slide: {
     width: WIDTH,
@@ -262,15 +239,9 @@ const style = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
   },
-  favorIcon: {
-    transform: [{ translateX: -15 }],
-    padding: 7,
-    borderRadius: 50,
-    backgroundColor: "rgba(0,0,0,0.1)",
-  },
   name: {
     fontSize: 25,
-    fontWeight: 700,
+    fontWeight: "700",
     marginHorizontal: 20,
     textTransform: "uppercase",
   },
@@ -281,7 +252,7 @@ const style = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 500,
+    fontWeight: "500",
     marginHorizontal: 20,
     marginVertical: 10,
     textTransform: "capitalize",
@@ -314,43 +285,7 @@ const style = StyleSheet.create({
     marginHorizontal: WIDTH * 0.05,
     flexDirection: "row",
     flexWrap: "wrap",
-    marginBottom: 30
-  },
-  relatedSlide: {
-    width: WIDTH,
-    height: WIDTH * 0.6,
-    marginBottom: 65,
-  },
-  related: {
-    position: "relative",
-    width: WIDTH * 0.9,
-    marginHorizontal: WIDTH * 0.01,
-    marginBottom: 15,
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-  vehicleSlide: {
-    position: "absolute",
-    width: WIDTH * 0.9,
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  relatedBackgound: {
-    position: "absolute",
-    width: WIDTH * 0.9,
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-  },
-  relatedInfor: {
-    position: "absolute",
-    bottom: WIDTH * 0.015,
-    left: WIDTH * 0.015,
-    zIndex: 100,
+    marginBottom: 30,
   },
   orderFeild: {
     position: "absolute",
