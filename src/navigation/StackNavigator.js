@@ -18,6 +18,7 @@ import AdminBottomNavigator from "./AdminBottomNavigator";
 import { useFocusEffect } from "@react-navigation/native";
 import { getProfileUserInStorage } from "../hooks/user";
 import CarDetails from "../screens/Admin/CarDetails";
+import Booking from "../screens/BookingScreen"
 
 const StackNavigator = () => {
   const [profile, setProfile] = React.useState("");
@@ -50,6 +51,7 @@ const StackNavigator = () => {
           <Stack.Screen name="RegisterCar" component={RegisterCar} />
           <Stack.Screen name="CreateBooking" component={CreateBooking} />
           <Stack.Screen name="BookingDetail" component={BookingDetail} />
+          <Stack.Screen name="BookingScreen" component={Booking} />
         </>
       )}
 
