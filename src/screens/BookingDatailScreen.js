@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
-import { View, SafeAreaView, StyleSheet, Text, TextInput, Image, ScrollView, TouchableOpacity, Dimensions } from "react-native";
+import { View, SafeAreaView, StyleSheet, Text, TextInput, Image, Modal, ScrollView, TouchableOpacity, Pressable, Dimensions } from "react-native";
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -7,8 +7,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { AuthContext } from "../context/authContext";
 import COLORS from "../constants/colors";
 import { slotList } from "../constants/slot";
-import { getDayNumber, formatCurrentDate, getCurrentTime } from "../utils/utils"
-import ModalBox from "../components/ModalBox";
+import { formatCurrentDate, getCurrentTime } from "../utils/utils"
+import CustomToast from "../components/CustomToast"
+import { cancelBooking } from "../api/booking"
+import { checkTokenInStorage } from "../hooks/user"
 
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
@@ -16,21 +18,53 @@ const HEIGHT = Dimensions.get("window").height;
 const BookingDetail = ({ navigation, route }) => {
 
     const { userDecode } = useContext(AuthContext);
+    const [accessToken, setAccessToken] = useState("")
     const [bookingDetail, setBookingDetail] = useState(route.params.booking)
     const [disableButton, setDisableButton] = useState(true)
     const [isOpenModal, setIsOpenModal] = useState(false)
+    const [noteText, setNoteText] = useState("")
+
+    const maxNoteLength = 120;
+    const showToast = CustomToast();
 
     useFocusEffect(
         useCallback(() => {
+            getData()
             checkCancle();
         }, [])
     );
+    const getData = async () => {
+        const token = await checkTokenInStorage()
+        setAccessToken(token)
+    }
 
-    const handleCancleBooking = () => {
+    const handleCancleBooking = async () => {
+        const data = {
+            booking_id: bookingDetail._id,
+            cancelNote: noteText
+        }
+        const response = await cancelBooking(accessToken, data)
+        console.log(response.status);
+        if (response.status === 200) {
+            showToast("Success", "Cancel successfully", "success");
+            setBookingDetail({ ...bookingDetail, status: "Cancelled", cancelNote: noteText })
+            setDisableButton(true)
+        } else if (response === 403) {
+            showToast("Warning", "You do not have permission to cancel this booking", "warning");
+        } else if (response === 404) {
+            showToast("Error", "Booking not found", "error");
+        } else if (response === 500) {
+            showToast("Error", "Internal server error", "error");
+        }
         setIsOpenModal(false)
-        setBookingDetail({...bookingDetail, status: "Cancelled"})
-        setDisableButton(true)
-        console.log("Cancle");
+    }
+
+    const checkNote = () => {
+        if (noteText === "") {
+            showToast("Warning", "Please input your reason", "warning");
+        } else {
+            handleCancleBooking()
+        }
     }
 
     function getHourFromTime(time) {
@@ -98,6 +132,12 @@ const BookingDetail = ({ navigation, route }) => {
                 return true;
         }
     }
+
+    const handleNoteChange = (text) => {
+        if (text.length <= maxNoteLength) {
+            setNoteText(text);
+        }
+    };
 
     const line = () => {
         return <View style={style.line}></View>;
@@ -174,7 +214,7 @@ const BookingDetail = ({ navigation, route }) => {
                                     {bookingDetail.status}
                                 </Text>
                                 <Text style={style.reason}>
-                                    Reason : None
+                                    Reason : {bookingDetail.cancelNote}
                                 </Text>
                             </View>
                         }
@@ -360,14 +400,51 @@ const BookingDetail = ({ navigation, route }) => {
             }
 
             {isOpenModal && (
-                <ModalBox
-                    open={isOpenModal}
-                    bodyText={"Are you sure to remove all cars from favorite list?"}
-                    actionClose={() => setIsOpenModal(false)}
-                    actionYes={handleCancleBooking}
-                    nameNo={"Cancel"}
-                    nameYes={"Confirm"}
-                />
+                <View>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={isOpenModal}
+                        onRequestClose={() => {
+                            setModalVisible(!isOpenModal);
+                        }}
+                    >
+                        <View style={style.centeredView}>
+                            <View style={style.modalView}>
+                                <Text style={style.modalText}>Are you sure to cancle ?</Text>
+                                <View style={style.noteContainer}>
+                                    <Text style={style.noteTitle}>Reason</Text>
+                                    <Text style={style.characterCount}>
+                                        {noteText.length}/{maxNoteLength}
+                                    </Text>
+                                    <TextInput
+                                        style={style.noteInput}
+                                        placeholder="Enter your note"
+                                        placeholderTextColor={COLORS.gray}
+                                        value={noteText}
+                                        onChangeText={handleNoteChange}
+                                        multiline
+                                    />
+                                </View>
+                                <View style={style.buttonActionContainer}>
+                                    <Pressable
+                                        style={[style.button, style.buttonClose]}
+                                        onPress={() => setIsOpenModal(false)}
+                                    >
+                                        <Text style={style.textStyleNo}>Cancel</Text>
+                                    </Pressable>
+
+                                    <Pressable
+                                        style={[style.button, style.buttonConfirm]}
+                                        onPress={() => { checkNote() }}
+                                    >
+                                        <Text style={style.textStyleYes}>Confirm</Text>
+                                    </Pressable>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
+                </View>
             )}
         </SafeAreaView>
     )
@@ -531,6 +608,92 @@ const style = StyleSheet.create({
     },
     infoIcon: {
         // marginRight: 5,
+    },
+
+    // modal box
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+    },
+    buttonClose: {
+        backgroundColor: COLORS.light,
+    },
+    textStyleNo: {
+        color: COLORS.black,
+        fontWeight: "bold",
+        textAlign: "center",
+    },
+    textStyleYes: {
+        color: COLORS.white,
+        fontWeight: "bold",
+        textAlign: "center",
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center",
+    },
+    buttonConfirm: {
+        backgroundColor: COLORS.green,
+    },
+    buttonActionContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: 'row',
+        gap: 10
+    },
+
+    // note
+    noteContainer: {
+        width: 300,
+        paddingHorizontal: 20,
+        marginTop: 20,
+        paddingBottom: 30,
+    },
+    noteTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 10,
+        color: COLORS.black,
+        borderLeftWidth: 4,
+        borderLeftColor: COLORS.orange,
+        paddingLeft: 10,
+    },
+    noteInput: {
+        color: COLORS.black,
+        paddingTop: 10,
+        borderWidth: 1,
+        borderColor: COLORS.lightGray,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginBottom: 10,
+        textAlignVertical: "top",
+        minHeight: 100,
+    },
+    characterCount: {
+        fontSize: 14,
+        color: COLORS.lightGray,
+        textAlign: "right",
     },
 });
 
