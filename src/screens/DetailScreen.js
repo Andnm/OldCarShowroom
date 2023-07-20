@@ -209,9 +209,9 @@ const Detail = ({ navigation, route }) => {
               }}
             >
               <Icon
-                name="cards-heart-outline"
+                name="cards-heart"
                 size={30}
-                color={COLORS.black}
+                color="white"
               />
             </TouchableOpacity>
           ) : (
@@ -461,9 +461,9 @@ const style = StyleSheet.create({
   },
   favorIcon:{
     transform:[{translateY: -15}, {translateX: -15}],
-    padding: 5,
+    padding: 3,
     borderRadius: 50,
-    // backgroundColor: COLORS.lightGray,
+    backgroundColor: "rgba(0,0,0,0.1)",
   },
   name: {
     fontSize: 25,
@@ -569,9 +569,9 @@ const style = StyleSheet.create({
   },
   line: {
     width: WIDTH,
-    height: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-    marginVertical: 2,
+    height: 7,
+    backgroundColor: "#e5e5e5",
+    marginVertical: 10,
   },
 
   //bottom sheet modal

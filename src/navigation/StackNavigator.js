@@ -13,6 +13,7 @@ import Gift from "../screens/Profile/Gift"
 import Detail from "../screens/DetailScreen";
 import RegisterCar from "../screens/Car/RegisterCar"
 import CreateBooking from "../screens/Booking/CreateBooking"
+import BookingDetail from "../screens/BookingDatailScreen";
 
 const StackNavigator = () => {
   return (
@@ -29,6 +30,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Detail" component={Detail} />
       <Stack.Screen name="RegisterCar" component={RegisterCar} />
       <Stack.Screen name="CreateBooking" component={CreateBooking} />
+      <Stack.Screen name="BookingDetail" component={BookingDetail} />
 
     </Stack.Navigator>
   );

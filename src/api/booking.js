@@ -19,3 +19,13 @@ export const createBooking = async (token, data) => {
     return [];
   }
 };
+
+export const getBooking = async (token) => {
+  try {
+    const instance = createAxiosInstance(token);
+    const response = await instance.get("/bookings");
+    return response;
+  } catch (error) {
+    return [];
+  }
+};
