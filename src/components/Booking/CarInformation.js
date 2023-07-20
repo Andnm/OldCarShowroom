@@ -24,7 +24,6 @@ const CarInformation = ({ car }) => {
       </Text>
 
       <View style={styles.carImagesContainer}>
-        <Text style={styles.carImagesTitle}>Car Images</Text>
         <View
           style={[styles.carImagesWrapper, isFewImages && styles.centerImages]}
         >
