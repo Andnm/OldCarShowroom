@@ -18,7 +18,7 @@ export default function AuthContextProvider({ children }) {
   const [userDecode, setUserDecode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +33,7 @@ export default function AuthContextProvider({ children }) {
 
   const loginFunction = async (inputs) => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const resSignIn = await signIn(inputs);
 
       if (resSignIn.status === 201) {
@@ -45,15 +45,20 @@ export default function AuthContextProvider({ children }) {
           setUserDecode(reqUser.data);
           saveProfileUserToStorage(reqUser.data);
           saveTokenToStorage(resSignIn.data.accessToken);
-          setIsLoading(false)
-          navigation.navigate("Home")
-          return reqUser.status
+          setIsLoading(false);
+
+          if (reqUser.data.role === "Admin") {
+            navigation.navigate("ManagerCar")
+          } else {
+            navigation.navigate("Home");
+          }
+          return reqUser.status;
         }
       }
-      setIsLoading(false)
-      return resSignIn.status
+      setIsLoading(false);
+      return resSignIn.status;
     } catch (error) {
-      return error
+      return error;
     }
   };
 
@@ -63,7 +68,7 @@ export default function AuthContextProvider({ children }) {
     clearProfileUserInStorage();
     clearAccessTokenInStorage();
     const currentToken = await checkTokenInStorage();
-    console.log('currentToken logout', currentToken);
+    console.log("currentToken logout", currentToken);
   };
 
   return (
