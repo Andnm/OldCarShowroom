@@ -55,7 +55,7 @@ const style = StyleSheet.create({
   },
   transmission:{
     alignSelf: 'flex-start',
-    backgroundColor: COLORS.lightBlue,
+    backgroundColor: "#a2d2ff",
     paddingHorizontal: 15,
     paddingVertical: 5,
     borderRadius: 15,

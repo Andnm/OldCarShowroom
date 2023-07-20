@@ -31,13 +31,14 @@ const Detail = ({ navigation, route }) => {
   const [favorCar, setFavorCar] = useState([]);
   const [favor, setFavor] = useState();
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-  const [disableButton, setDisableButton] = useState(!accessToken);
+  const [disableButton, setDisableButton] = useState(true);
 
   const showToast = CustomToast();
 
   useFocusEffect(
     React.useCallback(() => {
       getData();
+      checkOwner()
     }, [])
   );
 
@@ -56,6 +57,16 @@ const Detail = ({ navigation, route }) => {
       setFavorCar(favorData);
     }
   };
+
+  const checkOwner = () => {
+    if(userDecode._id === car.user_id){
+      setDisableButton(false)
+    }else{
+      if (!accessToken) {
+        setDisableButton(false)
+      }
+    }
+  }
 
   const handleCloseBottomSheet = () => {
     setBottomSheetVisible(false);
@@ -194,12 +205,12 @@ const Detail = ({ navigation, route }) => {
           })}
         </ScrollView>
         <View style={style.main}>
-          <>
+          <View>
             <Text style={style.name}>{car.name}</Text>
             <Text style={style.price}>
               {shortenPrice(car.minPrice)} - {shortenPrice(car.maxPrice)} VND{" "}
             </Text>
-          </>
+          </View>
 
           {!favor ? (
             <TouchableOpacity
@@ -209,8 +220,8 @@ const Detail = ({ navigation, route }) => {
               }}
             >
               <Icon
-                name="cards-heart"
-                size={30}
+                name="heart"
+                size={25}
                 color="white"
               />
             </TouchableOpacity>
@@ -222,8 +233,8 @@ const Detail = ({ navigation, route }) => {
               }}
             >
               <Icon
-                name="cards-heart"
-                size={30}
+                name="heart"
+                size={25}
                 color={COLORS.red}
               />
             </TouchableOpacity>
@@ -303,27 +314,31 @@ const Detail = ({ navigation, route }) => {
           )}
         </ScrollView>
       </ScrollView>
-      <TouchableOpacity
-        style={style.orderFeild}
-        onPress={handleNavigationToBooking}
-      >
-        <View
-          style={[
-            style.orderButton,
-            disableButton && { opacity: 0.5 }
-          ]}
+
+      {
+        disableButton &&
+        <TouchableOpacity
+          style={style.orderFeild}
+          onPress={handleNavigationToBooking}
         >
-          <Text
-            style={{
-              color: "white",
-              fontSize: 25,
-              fontWeight: 500,
-            }}
+          <View
+            style={[
+              style.orderButton
+            ]}
           >
-            Booking
-          </Text>
-        </View>
-      </TouchableOpacity>
+            <Text
+              style={{
+                color: "white",
+                fontSize: 25,
+                fontWeight: 500,
+              }}
+            >
+              Booking
+            </Text>
+          </View>
+        </TouchableOpacity>
+      }
+
 
       <Modal
         visible={bottomSheetVisible}
@@ -459,9 +474,9 @@ const style = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
   },
-  favorIcon:{
-    transform:[{translateY: -15}, {translateX: -15}],
-    padding: 3,
+  favorIcon: {
+    transform: [{ translateX: -15 }],
+    padding: 7,
     borderRadius: 50,
     backgroundColor: "rgba(0,0,0,0.1)",
   },

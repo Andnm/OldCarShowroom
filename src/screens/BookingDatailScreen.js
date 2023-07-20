@@ -1,18 +1,59 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import { View, SafeAreaView, StyleSheet, Text, TextInput, Image, ScrollView, TouchableOpacity, Dimensions } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
 
+import { AuthContext } from "../context/authContext";
 import COLORS from "../constants/colors";
 import { slotList } from "../constants/slot";
+import { getDayNumber, formatCurrentDate, getCurrentTime } from "../utils/utils"
+import ModalBox from "../components/ModalBox";
 
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
 
 const BookingDetail = ({ navigation, route }) => {
 
-    const bookingDetail = route.params.booking
+    const { userDecode } = useContext(AuthContext);
+    const [bookingDetail, setBookingDetail] = useState(route.params.booking)
     const [disableButton, setDisableButton] = useState(true)
+    const [isOpenModal, setIsOpenModal] = useState(false)
+
+    useFocusEffect(
+        useCallback(() => {
+            checkCancle();
+        }, [])
+    );
+
+    const handleCancleBooking = () => {
+        setIsOpenModal(false)
+        setBookingDetail({...bookingDetail, status: "Cancelled"})
+        setDisableButton(true)
+        console.log("Cancle");
+    }
+
+    function getHourFromTime(time) {
+        const [hour] = time.split(":");
+        return Number(hour);
+    }
+
+    const checkCancle = () => {
+        // console.log("booking : ",bookingDetail.date);
+        // console.log("now : ",formatCurrentDate(0));
+        if (bookingDetail.date >= formatCurrentDate(0)) {
+            if (bookingDetail.date > formatCurrentDate(0)) {
+                setDisableButton(false)
+            } else {
+                if (getCurrentTime() - getHourFromTime(getSlotTime(bookingDetail.slot)) > 2) {
+                    setDisableButton(false)
+                }
+            }
+        }
+        if (bookingDetail.status === "Cancelled") {
+            setDisableButton(true)
+        }
+    }
 
     const getSlotTime = (slot) => {
         let time = slot
@@ -63,7 +104,7 @@ const BookingDetail = ({ navigation, route }) => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white}}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
             <View style={style.header}>
                 <Icon
                     name="arrow-left"
@@ -80,7 +121,7 @@ const BookingDetail = ({ navigation, route }) => {
                 />
             </View>
             <ScrollView
-                style={[style.container, !disableButton && {marginBottom: 55}]}
+                style={[style.container, !disableButton && { marginBottom: 55 }]}
                 showsVerticalScrollIndicator={false}
             >
                 <View style={style.bookingHeader}>
@@ -123,17 +164,17 @@ const BookingDetail = ({ navigation, route }) => {
                         <View style={{ ...style.dots, backgroundColor: getStatusColor(bookingDetail.status) }} />
                         {checkConfirm(bookingDetail.status) ?
                             <View style={style.bodyStatusText}>
-                                <Text style={style.status}>
+                                <Text style={{ ...style.status, color: getStatusColor(bookingDetail.status) }}>
                                     {bookingDetail.status}
                                 </Text>
                             </View>
                             :
                             <View style={style.bodyStatusText}>
-                                <Text style={style.status}>
+                                <Text style={{ ...style.status, color: getStatusColor(bookingDetail.status) }}>
                                     {bookingDetail.status}
                                 </Text>
                                 <Text style={style.reason}>
-                                    Reason :
+                                    Reason : None
                                 </Text>
                             </View>
                         }
@@ -152,7 +193,8 @@ const BookingDetail = ({ navigation, route }) => {
                                 Time : {getSlotTime(bookingDetail.slot)}
                             </Text>
                             <Text style={style.price}>
-                                Price : {shortenPrice(bookingDetail.car.minPrice)} - {shortenPrice(bookingDetail.car.maxPrice)} VND{" "}
+                                Date  : {bookingDetail.date}
+                                {/* Price : {shortenPrice(bookingDetail.car.minPrice)} - {shortenPrice(bookingDetail.car.maxPrice)} VND{" "} */}
                             </Text>
                         </View>
                     </View>
@@ -256,12 +298,48 @@ const BookingDetail = ({ navigation, route }) => {
                         />
                     </View>
                 </View>
+                <View style={style.section}>
+                    <Text style={style.sectionTitle}>
+                        <Text style={style.sectionTitleBorder}>User infomation</Text>
+                    </Text>
+
+                    <View style={style.infoUserContainer}>
+                        <Icon
+                            name="car"
+                            size={23}
+                            color={COLORS.black}
+                            style={style.infoIcon}
+                        />
+                        <Text style={style.requiredField}></Text>
+                        <TextInput
+                            style={style.infoInput}
+                            placeholder={'Name: ' + userDecode.fullName}
+                            placeholderTextColor={COLORS.black}
+                            editable={false}
+                        />
+                    </View>
+                    <View style={style.infoUserContainer}>
+                        <Icon
+                            name="image-text"
+                            size={23}
+                            color={COLORS.black}
+                            style={style.infoIcon}
+                        />
+                        <Text style={style.requiredField}></Text>
+                        <TextInput
+                            style={style.infoInput}
+                            placeholder={'Phone: ' + (userDecode.phone ? userDecode.phone : "None")}
+                            placeholderTextColor={COLORS.black}
+                            editable={false}
+                        />
+                    </View>
+                </View>
             </ScrollView>
 
             {!disableButton &&
                 <TouchableOpacity
                     style={style.orderFeild}
-                // onPress={handleNavigationToBooking}
+                    onPress={() => { setIsOpenModal(true) }}
                 >
                     <View
                         style={
@@ -280,6 +358,17 @@ const BookingDetail = ({ navigation, route }) => {
                     </View>
                 </TouchableOpacity>
             }
+
+            {isOpenModal && (
+                <ModalBox
+                    open={isOpenModal}
+                    bodyText={"Are you sure to remove all cars from favorite list?"}
+                    actionClose={() => setIsOpenModal(false)}
+                    actionYes={handleCancleBooking}
+                    nameNo={"Cancel"}
+                    nameYes={"Confirm"}
+                />
+            )}
         </SafeAreaView>
     )
 }

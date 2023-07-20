@@ -26,10 +26,8 @@ const Booking = ({ navigation }) => {
   );
 
   const getData = async () => {
-    console.log(' accessToken booking', accessToken)
     const response = await getBooking(accessToken)
     const data = response.data
-    console.log('booking', response)
     setBookingData(data)
   };
 
@@ -68,11 +66,12 @@ const Booking = ({ navigation }) => {
     }
   };
 
-  const bookingCard = (item) => {
+  const bookingCard = (item, key) => {
     return (
       <TouchableOpacity
         style={style.bookingCard}
         onPress={() => navigation.navigate("BookingDetail", {booking : item})}
+        key={key}
       >
         <View style={style.cardHeader}>
           <Text style={style.cardName}>
@@ -124,28 +123,16 @@ const Booking = ({ navigation }) => {
         ) : (
           <>
             <View style={style.header}>
-              <Icon
-                name="arrow-left"
-                color={"white"}
-                size={28}
-                onPress={() => navigation.goBack()}
-              />
               <Text style={style.headerTitle}>Booking</Text>
-              <Icon
-                name="dots-vertical"
-                color={"white"}
-                size={30}
-              // onPress={() => setBottomSheetVisible(true)}
-              />
             </View>
             <ScrollView
               showsVerticalScrollIndicator={false}
             >
               {
                 bookingData ?
-                  bookingData.map((item) => {
+                  bookingData.map((item, key) => {
                     return (
-                      bookingCard(item)
+                      bookingCard(item, key)
                     )
                   })
                   :
@@ -171,7 +158,7 @@ const style = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 30,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     backgroundColor: "black",
     paddingVertical: 20,
   },
@@ -199,7 +186,7 @@ const style = StyleSheet.create({
   },
   cardTransmission: {
     alignSelf: 'flex-start',
-    backgroundColor: COLORS.lightBlue,
+    backgroundColor: "#a2d2ff",
     paddingHorizontal: 15,
     paddingVertical: 5,
     borderRadius: 15,

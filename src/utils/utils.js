@@ -67,6 +67,12 @@ const getDayNumberAnotherDate = (dateString) => {
   return parseInt(day, 10);
 };
 
+const getCurrentTime = () => {
+  const currentDate = moment().tz("Asia/Ho_Chi_Minh");
+  const hour = currentDate.hour()
+  return hour
+}
+
 export {
   convertDateFormat,
   formatCurrentDate,
@@ -74,4 +80,5 @@ export {
   getDayNumber,
   getMonthNameAnotherDate,
   getDayNumberAnotherDate,
+  getCurrentTime,
 };
