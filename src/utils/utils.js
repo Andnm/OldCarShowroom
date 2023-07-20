@@ -1,10 +1,28 @@
 import moment from "moment-timezone";
 
-const formatDateToYYYYMMDD = (date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+const formatCurrentDate = (optionDate) => {
+  const targetDate = moment().tz("Asia/Ho_Chi_Minh");
+  const date = targetDate.date() + optionDate;
+  const month = targetDate.month() + 1;
+  const year = targetDate.year();
+
+  const formattedDate = `${year}-${month.toString().padStart(2, "0")}-${date
+    .toString()
+    .padStart(2, "0")}`;
+  return formattedDate;
+};
+
+const convertDateFormat = (inputDate) => {
+  const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
+  if (!dateRegex.test(inputDate)) {
+    throw new Error("Invalid date");
+  }
+
+  const [year, month, day] = inputDate.split("/");
+
+  const formattedDate = `${year}-${month}-${day}`;
+
+  return formattedDate;
 };
 
 const getMonthName = (date) => {
@@ -34,6 +52,26 @@ const getDayNumber = (date) => {
   return targetDate.date();
 };
 
+const getMonthNameAnotherDate = (dateString) => {
+  const [year, month, day] = dateString?.split("-");
 
-export { formatDateToYYYYMMDD, getMonthName, getDayNumber };
+  const date = new Date(year, month - 1, day);
 
+  const monthName = date.toLocaleString("default", { month: "long" });
+  return monthName;
+};
+
+const getDayNumberAnotherDate = (dateString) => {
+  const [year, month, day] = dateString?.split("-");
+
+  return parseInt(day, 10);
+};
+
+export {
+  convertDateFormat,
+  formatCurrentDate,
+  getMonthName,
+  getDayNumber,
+  getMonthNameAnotherDate,
+  getDayNumberAnotherDate,
+};

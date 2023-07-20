@@ -54,11 +54,15 @@ const CreateBooking = ({ navigation, route }) => {
       date: dateToData,
       slot: selectedSlot,
       licensePlate: car.licensePlate,
+      fullName: fullname,
+      phone: phone,
+      note: note,
     };
     const response = await createBooking(accessToken, data);
 
     if (response.status === 200 || response.status === 201) {
       showToast("Success", "Create Booking Successfully!", "success");
+      navigation("MyCar")
     } else {
       showToast("Error", "Create Booking failed!", "error");
     }
@@ -74,11 +78,11 @@ const CreateBooking = ({ navigation, route }) => {
     }
   };
 
-  const disable = false;
-  // fullname === "" ||
-  // phone === "" ||
-  // selectedDate === "" ||
-  // selectedSlot === "";
+  const disable =
+    fullname === "" ||
+    phone === "" ||
+    selectedDate === "" ||
+    selectedSlot === "";
 
   return (
     <SafeAreaView style={styles.container}>

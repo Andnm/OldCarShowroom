@@ -7,7 +7,8 @@ const COLORS = {
   lightGreen: "#00a551",
   black: "#000000",
   blue: "blue",
-  orange: "#FF8C00"
+  orange: "#FF8C00",
+  greyish: "#e5e5e5"
 };
 
 export default COLORS;

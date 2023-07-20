@@ -1,11 +1,30 @@
 import React, { useContext, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  TouchableWithoutFeedback,
+  Button,
+} from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { slotList } from "../../constants/slot";
 import COLORS from "../../constants/colors";
 import moment from "moment-timezone";
 import { getSlotByDateAndLicensePlate } from "../../api/slot";
-import { getMonthName, getDayNumber } from "../../utils/utils";
+import {
+  getMonthName,
+  getDayNumber,
+  formatCurrentDate,
+  getMonthNameAnotherDate,
+  getDayNumberAnotherDate,
+  convertDateFormat,
+} from "../../utils/utils";
+import DatePicker, {
+  getToday,
+  getFormatedDate,
+} from "react-native-modern-datepicker";
 
 const Schedule = (props) => {
   const {
@@ -19,31 +38,93 @@ const Schedule = (props) => {
   } = props;
 
   const [renderSlot, setRenderSlot] = useState(slotList);
+
   const [anotherDate, setAnotherDate] = useState("");
+
+  const [selectedAnotherDate, setSelectedAnotherDate] = useState("");
+  const [openModalDate, setOpenModalDate] = useState(false);
+
+  const today = new Date();
+  const current = getToday();
+  const startDate = getFormatedDate(
+    today.setDate(today.getDate()),
+    "YYYY-MM-DD"
+  );
+
+  const handleOpenModalDate = () => {
+    if (anotherDate === "") {
+      setAnotherDate(formatCurrentDate(2));
+    }
+    setOpenModalDate(true);
+  };
+
+  const handleCloseModalDate = () => {
+    setOpenModalDate(false);
+    setAnotherDate("");
+  };
+
+  const handleConfirmModalDate = () => {
+    setSelectedAnotherDate(convertDateFormat(anotherDate));
+    handleDateSelection(2)
+    setOpenModalDate(false);
+
+  };
+
+  const handleDateOnChange = (propDate) => {
+    setAnotherDate(propDate);
+  };
+
+  const handleChooseAnotherDateFromPlus = (date) => {
+    handleOpenModalDate();
+    handleDateSelection(date)
+  }
 
   const renderDateItem = (date, label) => {
     const isSelected = selectedDate === date;
     const textColor = isSelected ? COLORS.white : COLORS.black;
     const backgroundColor = isSelected ? COLORS.green : "#e5e5e5";
     let disableButton = false;
-
+    
     if (date === 2) {
       return (
-        <TouchableOpacity
-          style={[styles.dateItem, { backgroundColor }]}
-          activeOpacity={0.8}
-          disabled={disableButton}
-        >
-          <Icon
-            name="plus"
-            size={24}
-            color={textColor}
-            style={styles.iconPlus}
-          />
-          <Text style={[styles.dateSubtitle, { color: textColor }]}>
-            {label}
-          </Text>
-        </TouchableOpacity>
+        <>
+          {selectedAnotherDate && selectedDate === 2 ? (
+            <TouchableOpacity
+              style={[styles.dateItem, {backgroundColor:COLORS.green}]}
+              onPress={() => setOpenModalDate(true)}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.monthText, { color: COLORS.white }]}>
+                {getMonthNameAnotherDate(selectedAnotherDate)}
+              </Text>
+              <Text style={[styles.dayText, { color: COLORS.white }]}>
+                {getDayNumberAnotherDate(selectedAnotherDate)}
+              </Text>
+              <Text style={[styles.dateSubtitle, { color: COLORS.white }]}>
+                {label}
+              </Text>
+            </TouchableOpacity>
+
+          ) : (
+            <TouchableOpacity
+              style={[styles.dateItem, { backgroundColor }]}
+              activeOpacity={0.8}
+              disabled={disableButton}
+              onPress={() => handleChooseAnotherDateFromPlus(date)}
+            >
+              <Icon
+                name="plus"
+                size={24}
+                color={textColor}
+                style={styles.iconPlus}
+              />
+
+              <Text style={[styles.dateSubtitle, { color: textColor }]}>
+                {label}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </>
       );
     } else if (date === 0) {
       const currentTime = moment().tz("Asia/Ho_Chi_Minh");
@@ -140,15 +221,14 @@ const Schedule = (props) => {
       setDateToData(formattedDate);
       return formattedDate;
     } else {
-      setDateToData(anotherDate);
-      return anotherDate
+      setDateToData(selectedAnotherDate);
+      return selectedAnotherDate;
     }
   };
 
   React.useEffect(() => {
     if (selectedDate !== "") {
       const callAPI = async () => {
-        // console.log("come here")
         handleLoading(true);
 
         const response = await getSlotByDateAndLicensePlate(
@@ -171,7 +251,7 @@ const Schedule = (props) => {
       };
       callAPI();
     }
-  }, [selectedDate]);
+  }, [selectedDate, selectedAnotherDate]);
 
   return (
     <View style={styles.section}>
@@ -191,6 +271,34 @@ const Schedule = (props) => {
           {renderDateItem(2, "Another date")}
         </View>
       </View>
+
+      {openModalDate && (
+        <Modal animationType="slide" transparent={true} visible={openModalDate}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <DatePicker
+                  mode="calendar"
+                  minimumDate={startDate}
+                  selected={anotherDate}
+                  onDateChange={handleDateOnChange}
+                />
+                <View style={styles.buttonContainer}>
+                  <Button
+                    title="Cancel"
+                    onPress={handleCloseModalDate}
+                    color={COLORS.lightGray}
+                  />
+                  <View style={{ width: 20 }} />
+                  <Button
+                    title="Confirm"
+                    onPress={handleConfirmModalDate}
+                    color={COLORS.green}
+                  />
+                </View>
+              </View>
+            </View>
+        </Modal>
+      )}
 
       {selectedDate !== "" && (
         <View style={styles.dateContainer}>
@@ -298,6 +406,33 @@ const styles = StyleSheet.create({
   },
   dateSubtitle: {
     fontSize: 12,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    width: "90%",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 20,
   },
 });
 

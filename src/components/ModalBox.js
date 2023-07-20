@@ -71,12 +71,12 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.light,
   },
   textStyleNo: {
-    color: COLORS.green,
+    color: COLORS.black,
     fontWeight: "bold",
     textAlign: "center",
   },
   textStyleYes: {
-    color: COLORS.light,
+    color: COLORS.white,
     fontWeight: "bold",
     textAlign: "center",
   },

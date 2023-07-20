@@ -22,7 +22,6 @@ export const getAllSlot = async () => {
 
 export const getSlotByDateAndLicensePlate = async (licensePlate, date) => {
   // console.log("licensePlate", licensePlate)
-  // console.log("date", date)
   try {
     const response = await axios.get(
       `${LINK_API}/slots/${licensePlate}/${date}`
