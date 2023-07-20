@@ -57,11 +57,13 @@ export default function AuthContextProvider({ children }) {
     }
   };
 
-  const logoutFunction = () => {
+  const logoutFunction = async () => {
     setAccessToken("");
     setUserDecode("");
     clearProfileUserInStorage();
     clearAccessTokenInStorage();
+    const currentToken = await checkTokenInStorage();
+    console.log('currentToken logout', currentToken);
   };
 
   return (

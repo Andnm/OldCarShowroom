@@ -6,27 +6,15 @@ import WarningToLogin from "../components/WarningToLogin";
 import { getProfileUserInStorage } from "../hooks/user";
 
 const Notification = ({ navigation }) => {
-  const { accessToken } = useContext(AuthContext);
+  const { accessToken, userDecode } = useContext(AuthContext);
   const [profile, setProfile] = React.useState([]);
-
-  React.useEffect(() => {
-    const focus = navigation.addListener("focus", async () => {
-      const fetchData = async () => {
-        const profile = await getProfileUserInStorage();
-        setProfile(profile);
-      };
-
-      fetchData();
-    });
-    return focus;
-  }, [navigation]);
 
   return (
     <SafeAreaView
       style={{ flex: 1, paddingHorizontal: 20, backgroundColor: COLORS.white }}
     >
       <View style={style.notification_container}>
-        {!profile ? (
+        {!userDecode ? (
           <WarningToLogin />
         ) : (
           <View style={style.header}>

@@ -14,21 +14,10 @@ const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
 
 const Booking = ({ navigation }) => {
-  const { accessToken } = useContext(AuthContext);
+  const { accessToken, userDecode } = useContext(AuthContext);
 
   const [profile, setProfile] = useState([]);
   const [bookingData, setBookingData] = useState([]);
-
-  useEffect(() => {
-    const focus = navigation.addListener("focus", async () => {
-      const fetchData = async () => {
-        const profile = await getProfileUserInStorage();
-        setProfile(profile);
-      };
-      fetchData();
-    });
-    return focus;
-  }, [navigation]);
 
   useFocusEffect(
     useCallback(() => {
@@ -37,8 +26,10 @@ const Booking = ({ navigation }) => {
   );
 
   const getData = async () => {
+    console.log(' accessToken booking', accessToken)
     const response = await getBooking(accessToken)
     const data = response.data
+    console.log('booking', response)
     setBookingData(data)
   };
 
@@ -68,14 +59,10 @@ const Booking = ({ navigation }) => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Pending":
-        return COLORS.orange;
       case "Cancelled":
         return COLORS.red;
-      case "Confirm":
+      case "Success":
         return "#0f8652";
-      case "Sold":
-        return COLORS.blue;
       default:
         return 'black';
     }
@@ -116,9 +103,9 @@ const Booking = ({ navigation }) => {
             flexDirection: "row",
             flexWrap: "wrap",
           }}>
-            <View style={{ ...style.dots, backgroundColor: getStatusColor(item.car.status) }} ></View>
-            <Text style={{ ...style.transmission, color: getStatusColor(item.car.status) }} >
-              {item.car.status}
+            <View style={{ ...style.dots, backgroundColor: getStatusColor(item.status) }} />
+            <Text style={{ ...style.transmission, color: getStatusColor(item.status) }} >
+              {item.status}
             </Text>
           </View>
         </View>
@@ -156,7 +143,7 @@ const Booking = ({ navigation }) => {
             >
               {
                 bookingData ?
-                  bookingData.map((item, key) => {
+                  bookingData.map((item) => {
                     return (
                       bookingCard(item)
                     )
@@ -176,6 +163,7 @@ const style = StyleSheet.create({
   booking_container: {
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 50,
   },
   header: {
     width: WIDTH,
