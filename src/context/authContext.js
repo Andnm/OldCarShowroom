@@ -69,6 +69,7 @@ export default function AuthContextProvider({ children }) {
     clearAccessTokenInStorage();
     const currentToken = await checkTokenInStorage();
     console.log("currentToken logout", currentToken);
+    navigation.navigate('HomeScreen')
   };
 
   return (

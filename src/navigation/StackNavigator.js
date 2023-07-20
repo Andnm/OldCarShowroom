@@ -36,9 +36,7 @@ const StackNavigator = () => {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* <Stack.Screen name="Intro" component={IntroScreen} /> */}
-      {profile.role === "User" && (
-        <>
+     
           <Stack.Screen name="HomeScreen" component={BottomNavigator} />
           <Stack.Screen name="Loading" component={SpinnerLoading} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
@@ -52,13 +50,11 @@ const StackNavigator = () => {
           <Stack.Screen name="CreateBooking" component={CreateBooking} />
           <Stack.Screen name="BookingDetail" component={BookingDetail} />
           <Stack.Screen name="BookingScreen" component={Booking} />
-        </>
-      )}
+    
 
       {/* admin */}
       <Stack.Screen name="ManagerCar" component={AdminBottomNavigator} />
       <Stack.Screen name="CarDetails" component={CarDetails} />
-
     </Stack.Navigator>
   );
 };

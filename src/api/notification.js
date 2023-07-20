@@ -23,7 +23,10 @@ export const getNofiticationList = async (token) => {
 export const setNofitication = async (token, notification_id) => {
     try {
         const instance = createAxiosInstance(token);
-        const response = await instance.patch("/notifications", notification_id);
+        const data = {
+            notification_id: notification_id
+        }
+        const response = await instance.patch("/notifications", data);
         return response;
     } catch (error) {
         return error;
