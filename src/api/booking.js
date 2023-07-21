@@ -21,7 +21,6 @@ export const createBooking = async (token, data) => {
 };
 
 export const getBooking = async (token) => {
-  console.log(token)
   try {
     const instance = createAxiosInstance(token);
     const response = await instance.get("/bookings");
@@ -30,3 +29,14 @@ export const getBooking = async (token) => {
     return [];
   }
 };
+
+export const cancelBooking = async (token, data) => {
+  try {
+    const instance = createAxiosInstance(token);
+    const response = await instance.patch("/bookings" , data);
+    return response;
+  } catch (error) {
+    return [];
+  }
+};
+

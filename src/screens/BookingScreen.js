@@ -8,13 +8,14 @@ import WarningToLogin from "../components/WarningToLogin";
 import { getProfileUserInStorage } from "../hooks/user";
 import { getBooking } from "../api/booking";
 import { useFocusEffect } from '@react-navigation/native';
+import { checkTokenInStorage } from "../hooks/user"
 
 
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
 
 const Booking = ({ navigation }) => {
-  const { accessToken, userDecode } = useContext(AuthContext);
+  // const { accessToken, userDecode } = useContext(AuthContext);
 
   const [profile, setProfile] = useState([]);
   const [bookingData, setBookingData] = useState([]);
@@ -26,6 +27,7 @@ const Booking = ({ navigation }) => {
   );
 
   const getData = async () => {
+    const accessToken = await checkTokenInStorage()
     const response = await getBooking(accessToken)
     const data = response.data
     setBookingData(data)

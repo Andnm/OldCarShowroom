@@ -29,7 +29,7 @@ export default function AuthContextProvider({ children }) {
     };
 
     fetchData();
-  });
+  }, [accessToken, userDecode]);
 
   const loginFunction = async (inputs) => {
     try {
