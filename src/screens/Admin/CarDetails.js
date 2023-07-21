@@ -170,7 +170,7 @@ const CarDetails = ({ navigation, route }) => {
           name="arrow-left"
           color={"white"}
           size={28}
-          onPress={() => navigation.navigate("Manager Car")}
+          onPress={() => navigation.navigate("Manage Car")}
         />
         <Text style={style.headerTitle}>{car.name}</Text>
         <Icon

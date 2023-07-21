@@ -60,14 +60,14 @@ const RegisterCar = ({ navigation }) => {
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    let result = await ExpoImagePicker.launchImageLibraryAsync({
-      mediaTypes: ExpoImagePicker.MediaTypeOptions.All,
+    let result = await ExpoImagePicker?.launchImageLibraryAsync({
+      mediaTypes: ExpoImagePicker?.MediaTypeOptions?.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
 
-    const source = { uri: result.assets[0].uri };
+    const source = { uri: result?.assets[0]?.uri };
     setImageInUI(source);
     handleCloseModalCamera();
   };
@@ -503,14 +503,14 @@ const RegisterCar = ({ navigation }) => {
           <TouchableWithoutFeedback onPress={handleCloseModalCamera}>
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <TouchableOpacity style={styles.modalOption}>
+                {/* <TouchableOpacity style={styles.modalOption}>
                   <Icon
                     name="camera-plus-outline"
                     size={20}
                     color={COLORS.black}
                   />
                   <Text>Open Camera</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
                 <TouchableOpacity
                   style={styles.modalOption}
@@ -614,6 +614,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#e5e5e5",
+    flexDirection: 'row',
+    justifyContent: 'center'
   },
   modalButton: {
     borderWidth: 1,

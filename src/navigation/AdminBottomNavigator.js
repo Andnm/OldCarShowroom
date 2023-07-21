@@ -26,10 +26,10 @@ const AdminBottomNavigator = () => {
           let iconName;
 
           switch (route.name) {
-            case "Manager Car":
+            case "Manage Car":
               iconName = "car";
               break;
-            case "Manager Booking":
+            case "Manage Booking":
               iconName = "transition";
               break;
             case "Setting":
@@ -41,8 +41,8 @@ const AdminBottomNavigator = () => {
         },
       })}
     >
-      <Tab.Screen name="Manager Car" component={ManagerCar} />
-      <Tab.Screen name="Manager Booking" component={ManagerBooking} />
+      <Tab.Screen name="Manage Car" component={ManagerCar} />
+      <Tab.Screen name="Manage Booking" component={ManagerBooking} />
       <Tab.Screen name="Setting" component={Setting} />
     </Tab.Navigator>
   );

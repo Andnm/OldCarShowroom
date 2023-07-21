@@ -18,7 +18,8 @@ import AdminBottomNavigator from "./AdminBottomNavigator";
 import { useFocusEffect } from "@react-navigation/native";
 import { getProfileUserInStorage } from "../hooks/user";
 import CarDetails from "../screens/Admin/CarDetails";
-import Booking from "../screens/BookingScreen"
+import Booking from "../screens/BookingScreen";
+import BookingDetailAdmin from "../screens/Admin/BookingDetailAdmin";
 
 const StackNavigator = () => {
   const [profile, setProfile] = React.useState("");
@@ -38,23 +39,24 @@ const StackNavigator = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {/* <Stack.Screen name="Intro" component={IntroScreen} /> */}
 
-      <Stack.Screen name="HomeScreen" component={BottomNavigator} />
-      <Stack.Screen name="Loading" component={SpinnerLoading} />
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
-      <Stack.Screen name="SignupScreen" component={SignupScreen} />
-      <Stack.Screen name="FavoriteCar" component={FavoriteCar} />
-      <Stack.Screen name="InfoAccount" component={InfoAccount} />
-      <Stack.Screen name="MyCar" component={MyCar} />
-      <Stack.Screen name="Gift" component={Gift} />
-      <Stack.Screen name="Detail" component={Detail} />
-      <Stack.Screen name="RegisterCar" component={RegisterCar} />
-      <Stack.Screen name="CreateBooking" component={CreateBooking} />
-      <Stack.Screen name="BookingDetail" component={BookingDetail} />
+          <Stack.Screen name="HomeScreen" component={BottomNavigator} />
+          <Stack.Screen name="Loading" component={SpinnerLoading} />
+          <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          <Stack.Screen name="SignupScreen" component={SignupScreen} />
+          <Stack.Screen name="FavoriteCar" component={FavoriteCar} />
+          <Stack.Screen name="InfoAccount" component={InfoAccount} />
+          <Stack.Screen name="MyCar" component={MyCar} />
+          <Stack.Screen name="Gift" component={Gift} />
+          <Stack.Screen name="Detail" component={Detail} />
+          <Stack.Screen name="RegisterCar" component={RegisterCar} />
+          <Stack.Screen name="CreateBooking" component={CreateBooking} />
+          <Stack.Screen name="BookingDetail" component={BookingDetail} />
+
 
       {/* admin */}
       <Stack.Screen name="ManagerCar" component={AdminBottomNavigator} />
       <Stack.Screen name="CarDetails" component={CarDetails} />
-
+      <Stack.Screen name="BookingDetailAdmin" component={BookingDetailAdmin} />
     </Stack.Navigator>
   );
 };

@@ -66,8 +66,11 @@ const Notification = ({ navigation }) => {
   const getData = async () => {
     const accessToken = await checkTokenInStorage();
     const response = await getNofiticationList(accessToken);
-    setAccessToken(accessToken);
-    setNofitiList(response?.data);
+    if (response.status === 200 || response.statu === 201) {
+      setAccessToken(accessToken);
+      setNofitiList(response?.data);
+    }
+
     setIsLoading(false);
   };
 
@@ -103,6 +106,7 @@ const Notification = ({ navigation }) => {
 
   const handleSeenAll = async () => {
     const response = await setNofiticationAll(accessToken);
+    console.log(response)
     if (response?.status === 200) {
       let list = nofitiList;
       list?.map((item, key) => {
@@ -155,7 +159,10 @@ const Notification = ({ navigation }) => {
           <WarningToLogin />
         ) : (
           <>
-            <ScrollView showsVerticalScrollIndicator={false} style={style.scrollViewBottom}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              style={style.scrollViewBottom}
+            >
               {!nofitiList[0] ? <Text>don't have any notification</Text> : ""}
               {newNofitiList[0] ? (
                 <Text style={style.title}>New notifications</Text>
@@ -312,8 +319,8 @@ const style = StyleSheet.create({
     marginRight: 10,
   },
   scrollViewBottom: {
-    marginBottom: 50
-  }
+    marginBottom: 50,
+  },
 });
 
 export default Notification;
