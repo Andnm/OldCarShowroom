@@ -7,18 +7,25 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 import { AuthContext } from "../context/authContext";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import COLORS from "../constants/colors";
 import Login from "./LoginScreen";
 import MAIN_PROFILE_LIST from "../constants/mainProfileList";
+import ModalBox from "../components/ModalBox";
+import SpinnerLoading from "./SpinnerLoading";
 
 const ProfileScreen = ({ navigation }) => {
-  const { accessToken, userDecode, logoutFunction } = useContext(AuthContext);
+  const { accessToken, userDecode, logoutFunction, isLoading} = useContext(AuthContext);
+  const [isOpenModalConfirm, setIsOpenModalConfirm] = React.useState(false);
 
   const handleLogoutFunction = () => {
+
+    setIsOpenModalConfirm(false)
     logoutFunction();
+
+    navigation.navigate('Home')
   };
 
   return (
@@ -26,17 +33,23 @@ const ProfileScreen = ({ navigation }) => {
       {userDecode ? (
         <View style={styles.profileContainer}>
           <LinearGradient
-            colors={['#fff', '#17B3A6']}
+            colors={["#fff", "#17B3A6"]}
             start={{
               x: 0,
-              y: 1
+              y: 1,
             }}
             end={{
               x: 0,
-              y: 0
-            }} style={styles.headerProfile}>
+              y: 0,
+            }}
+            style={styles.headerProfile}
+          >
             <Image
-              source={{ uri: userDecode.imgUrl ? userDecode.imgUrl : "https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg" }}
+              source={{
+                uri: userDecode.imgUrl
+                  ? userDecode.imgUrl
+                  : "https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg",
+              }}
               style={styles.profileImage}
             />
             <Text style={styles.fullNameText}>{userDecode.fullName}</Text>
@@ -64,15 +77,29 @@ const ProfileScreen = ({ navigation }) => {
 
           <TouchableOpacity
             style={styles.logoutButton}
-            onPress={handleLogoutFunction}
+            onPress={() => {setIsOpenModalConfirm(true)}}
           >
             <Icon name="exit-to-app" color={"darkgray"} size={25} />
             <Text style={styles.logoutButtonText}>LOG OUT</Text>
           </TouchableOpacity>
+
+          {isOpenModalConfirm && (
+            <ModalBox
+              open={isOpenModalConfirm}
+              bodyText={"Are you sure want to logout?"}
+              actionClose={() => setIsOpenModalConfirm(false)}
+              actionYes={handleLogoutFunction}
+              nameNo={"Cancel"}
+              nameYes={"Confirm"}
+            />
+          )}
+          
         </View>
       ) : (
         <Login />
       )}
+
+      {isLoading && <SpinnerLoading/>}
     </SafeAreaView>
   );
 };

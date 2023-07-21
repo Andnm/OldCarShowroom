@@ -52,7 +52,6 @@ const StackNavigator = () => {
           <Stack.Screen name="CreateBooking" component={CreateBooking} />
           <Stack.Screen name="BookingDetail" component={BookingDetail} />
 
-
       {/* admin */}
       <Stack.Screen name="ManagerCar" component={AdminBottomNavigator} />
       <Stack.Screen name="CarDetails" component={CarDetails} />

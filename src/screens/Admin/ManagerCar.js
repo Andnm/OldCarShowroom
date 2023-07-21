@@ -55,6 +55,14 @@ const ManagerCar = ({ navigation }) => {
     }
   };
 
+  const NoMatchingCars = () => {
+    return (
+      <View style={styles.noCarsContainer}>
+        <Text style={styles.noCarsText}>No cars with matching status</Text>
+      </View>
+    );
+  };
+
   const filterCarByStatus = (status) => {
     if (status === filterStatus || status === defaultFilterStatus) {
       setFilterStatus(null);
@@ -73,7 +81,7 @@ const ManagerCar = ({ navigation }) => {
       );
     }
   };
-  
+
   const filteredCars = filterStatus
     ? myCar.filter((item) => item.status === filterStatus)
     : myCar;
@@ -192,11 +200,15 @@ const ManagerCar = ({ navigation }) => {
         style={styles.home_container}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.carList}>
-          {sortCarsByStatus(filteredCars).map((item, key) => {
-            return <CardItem navigation={navigation} car={item} key={key} />;
-          })}
-        </View>
+        {filteredCars.length === 0 ? (
+          <NoMatchingCars />
+        ) : (
+          <View style={styles.carList}>
+            {sortCarsByStatus(filteredCars).map((item, key) => {
+              return <CardItem navigation={navigation} car={item} key={key} />;
+            })}
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -223,6 +235,16 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 25,
     marginHorizontal: 15,
+  },
+  noCarsContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 50,
+  },
+  noCarsText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: COLORS.primary,
   },
   filterContainer: {
     flexDirection: "row",

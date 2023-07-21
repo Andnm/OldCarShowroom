@@ -34,7 +34,7 @@ const Login = () => {
   const navigation = useNavigation();
   const handleLogin = async () => {
     const inputUser = {
-      email: email,
+      email: email.toLowerCase().trim(),
       password: password,
     };
     const response = await loginFunction(inputUser);

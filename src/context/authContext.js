@@ -47,6 +47,7 @@ export default function AuthContextProvider({ children }) {
           saveTokenToStorage(resSignIn.data.accessToken);
           setIsLoading(false);
 
+          console.log(reqUser.data.role === "Admin")
           if (reqUser.data.role === "Admin") {
             navigation.navigate("ManagerCar")
           } else {
@@ -63,10 +64,12 @@ export default function AuthContextProvider({ children }) {
   };
 
   const logoutFunction = async () => {
+    setIsLoading(true)
     setAccessToken("");
     setUserDecode("");
     clearProfileUserInStorage();
     clearAccessTokenInStorage();
+    setIsLoading(false)
     navigation.navigate('HomeScreen')
   };
 

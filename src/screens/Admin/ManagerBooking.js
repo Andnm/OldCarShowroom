@@ -19,12 +19,15 @@ import { getBooking } from "../../api/booking";
 import BookingDetailAdmin from "./BookingDetailAdmin";
 import { useFocusEffect } from "@react-navigation/native";
 import { checkTokenInStorage } from "../../hooks/user";
+import SpinnerLoading from "../../screens/SpinnerLoading";
 
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
 
 const ManagerBooking = ({ navigation }) => {
   const [listBooking, setListBooking] = React.useState([]);
+  const [selectedStatus, setSelectedStatus] = React.useState("All");
+  const [filteredBooking, setFilteredBooking] = React.useState([]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -35,7 +38,46 @@ const ManagerBooking = ({ navigation }) => {
   const getData = async () => {
     const accessToken = await checkTokenInStorage();
     const response = await getBooking(accessToken);
-    response.status === 200 ? setListBooking(response.data) : "";
+    const currentDate = new Date().toISOString().split("T")[0];
+
+    let filteredList = [];
+    const todayBookings = response.data.filter(
+      (item) => item.date === currentDate
+    );
+    const otherBookings = response.data.filter(
+      (item) => item.date !== currentDate
+    );
+
+    filteredList = [...todayBookings, ...otherBookings];
+
+    setFilteredBooking(filteredList);
+  };
+
+  const filterBooking = (status) => {
+    const currentDate = new Date().toISOString().split("T")[0];
+
+    if (status === "All") {
+      const todayBookings = listBooking.filter(
+        (item) => item.date === currentDate
+      );
+      const otherBookings = listBooking.filter(
+        (item) => item.date !== currentDate
+      );
+
+      setFilteredBooking([...todayBookings, ...otherBookings]);
+    } else {
+      const filteredList = listBooking.filter((item) => item.status === status);
+      const remainingBookings = filteredList.filter(
+        (item) => item.date !== currentDate
+      );
+      const todayBookings = filteredList.filter(
+        (item) => item.date === currentDate
+      );
+
+      setFilteredBooking([...todayBookings, ...remainingBookings]);
+    }
+
+    setSelectedStatus(status);
   };
 
   function shortenPrice(price) {
@@ -95,7 +137,9 @@ const ManagerBooking = ({ navigation }) => {
             }}
           />
           <View style={styles.cardBodyDetail}>
-            <Text style={styles.cardTime}>Time : {getSlotTime(item.slot)}</Text>
+            <Text style={styles.cardTime}>
+              Time : {getSlotTime(item.slot)}, {item.date}
+            </Text>
             <Text style={styles.cardPrice}>
               Price : {shortenPrice(item.car.minPrice)} -{" "}
               {shortenPrice(item.car.maxPrice)} VND{" "}
@@ -145,18 +189,62 @@ const ManagerBooking = ({ navigation }) => {
         <Text style={styles.headerTitle}></Text>
       </View>
 
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[
+            styles.filterOption,
+            selectedStatus === "All" && styles.filterOptionSelected,
+          ]}
+          onPress={() => filterBooking("All")}
+        >
+          <Text
+            style={{ color: selectedStatus === "All" ? COLORS.white : "black" }}
+          >
+            All
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.filterOption,
+            selectedStatus === "Success" && styles.filterOptionSelected,
+          ]}
+          onPress={() => filterBooking("Success")}
+        >
+          <Text
+            style={{
+              color: selectedStatus === "Success" ? COLORS.white : "black",
+            }}
+          >
+            Success
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.filterOption,
+            selectedStatus === "Cancelled" && styles.filterOptionSelected,
+          ]}
+          onPress={() => filterBooking("Cancelled")}
+        >
+          <Text
+            style={{
+              color: selectedStatus === "Cancelled" ? COLORS.white : "black",
+            }}
+          >
+            Cancelled
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.container}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={styles.scrollViewBottom}
         >
-          {listBooking ? (
-            listBooking.map((item, key) => {
-              return bookingCard(item, key);
-            })
-          ) : (
-            <Text>Don't have any booking</Text>
-          )}
+          {filteredBooking.length > 0
+            ? filteredBooking.map((item, key) => {
+                return bookingCard(item, key);
+              })
+            : ""}
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -264,6 +352,22 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 15,
     marginTop: 5,
+  },
+
+  //filter
+  filterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingVertical: 10,
+    backgroundColor: COLORS.lightGray,
+  },
+  filterOption: {
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 15,
+  },
+  filterOptionSelected: {
+    backgroundColor: COLORS.green,
   },
 });
 
