@@ -17,6 +17,9 @@ import COLORS from "../../constants/colors";
 import { facilitiesServices } from "../../constants/facilities";
 import CustomToast from "../../components/CustomToast";
 import { AuthContext } from "../../context/authContext";
+import ModalBox from "../../components/ModalBox";
+import { changeCarStatusByAdmin } from "../../api/car";
+import { checkTokenInStorage } from "../../hooks/user";
 
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
@@ -25,7 +28,10 @@ const CarDetails = ({ navigation, route }) => {
   const { accessToken, userDecode } = useContext(AuthContext);
   const [car, setCar] = useState(route.params.car);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-  const [disableButton, setDisableButton] = useState(true);
+
+  const [isOpenModalConfirm, setIsOpenModalConfirm] = useState(false);
+  const [isOpenModalSold, setIsOpenModalSold] = useState(false);
+  const [isOpenModalCancel, setIsOpenModalCancel] = useState(false);
 
   const showToast = CustomToast();
 
@@ -71,6 +77,90 @@ const CarDetails = ({ navigation, route }) => {
 
   const line = () => {
     return <View style={style.line}></View>;
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Pending":
+        return COLORS.orange;
+      case "Cancelled":
+        return COLORS.red;
+      case "Confirm":
+        return "#0f8652";
+      case "Sold":
+        return COLORS.blue;
+      default:
+        return "black";
+    }
+  };
+
+  const checkConfirm = (status) => {
+    switch (status) {
+      case "Cancelled":
+        return false;
+      default:
+        return true;
+    }
+  };
+
+  const handleConfirmCarToSale = async () => {
+    const accessToken = await checkTokenInStorage();
+    const response = await changeCarStatusByAdmin(
+      accessToken,
+      car.licensePlate,
+      "Confirm"
+    );
+    if (response.status === 200 || response.status === 201) {
+      showToast(
+        "Success",
+        "Successfully posted the car to the Showroom!",
+        "success"
+      );
+      setIsOpenModalConfirm(false);
+      navigation.navigate("ManagerCar");
+    } else {
+      showToast("Error", "Posted the car to the Showroom failed!", "error");
+    }
+  };
+
+  const handleSoldCar = async () => {
+    const accessToken = await checkTokenInStorage();
+    const response = await changeCarStatusByAdmin(
+      accessToken,
+      car.licensePlate,
+      "Sold"
+    );
+    if (response.status === 200 || response.status === 201) {
+      showToast(
+        "Success",
+        "Successfully change the status to sold!",
+        "success"
+      );
+      setIsOpenModalSold(false);
+      navigation.navigate("ManagerCar");
+    } else {
+      showToast("Error", "Change the status to sold failed!", "error");
+    }
+  };
+
+  const handleCancelCarToSale = async () => {
+    const accessToken = await checkTokenInStorage();
+    const response = await changeCarStatusByAdmin(
+      accessToken,
+      car.licensePlate,
+      "Cancelled"
+    );
+    if (response.status === 200 || response.status === 201) {
+      showToast(
+        "Success",
+        "Successfully to cancel this car up to Showroom",
+        "success"
+      );
+      setIsOpenModalCancel(false);
+      navigation.navigate("ManagerCar");
+    } else {
+      showToast("Error", "Cancel this car up to Showroom failed!", "error");
+    }
   };
 
   return (
@@ -123,6 +213,45 @@ const CarDetails = ({ navigation, route }) => {
           </View>
         </View>
         {line()}
+        <View>
+          <Text style={style.title}>Status Car</Text>
+        </View>
+
+        <View style={style.bodyStatus}>
+          <View
+            style={{
+              ...style.dots,
+              backgroundColor: getStatusColor(car.status),
+            }}
+          />
+          {checkConfirm(car.status) ? (
+            <View style={style.bodyStatusText}>
+              <Text
+                style={{
+                  ...style.status,
+                  color: getStatusColor(car.status),
+                }}
+              >
+                {car.status}
+              </Text>
+            </View>
+          ) : (
+            <View style={style.bodyStatusText}>
+              <Text
+                style={{
+                  ...style.status,
+                  color: getStatusColor(car.status),
+                }}
+              >
+                {car.status}
+              </Text>
+              <Text style={style.reason}>Reason : None</Text>
+            </View>
+          )}
+        </View>
+        {line()}
+        <Text style={style.title}>License Plate: {car.licensePlate}</Text>
+        {line()}
         <Text style={style.title}>characteristic</Text>
         <View style={style.characteristic}>
           {icon("7 seat", "car-seat")}
@@ -144,20 +273,94 @@ const CarDetails = ({ navigation, route }) => {
         </View>
       </ScrollView>
 
-      {disableButton && (
-        <TouchableOpacity style={style.orderFeild}>
-          <View style={[style.orderButton]}>
+      {car?.status === "Pending" && (
+        <View style={style.buttonsContainer}>
+          <TouchableOpacity
+            style={style.buttonClick}
+            onPress={() => setIsOpenModalCancel(true)}
+          >
+            <View style={[style.cancelledButton]}>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 20,
+                  fontWeight: 500,
+                }}
+              >
+                Cancel
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={style.buttonClick}
+            onPress={() => setIsOpenModalConfirm(true)}
+          >
+            <View style={[style.orderButton]}>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 20,
+                  fontWeight: 500,
+                }}
+              >
+                Confirm
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {car?.status === "Confirm" && (
+        <TouchableOpacity
+          style={style.orderFeild}
+          onPress={() => setIsOpenModalSold(true)}
+        >
+          <View style={[style.soldButton]}>
             <Text
               style={{
                 color: "white",
-                fontSize: 25,
+                fontSize: 20,
                 fontWeight: 500,
               }}
             >
-              Booking
+              Confirm the car has been sold
             </Text>
           </View>
         </TouchableOpacity>
+      )}
+
+      {isOpenModalConfirm && (
+        <ModalBox
+          open={isOpenModalConfirm}
+          bodyText={"Are you sure want to up this car into Showroom?"}
+          actionClose={() => setIsOpenModalConfirm(false)}
+          actionYes={handleConfirmCarToSale}
+          nameNo={"Cancel"}
+          nameYes={"Confirm"}
+        />
+      )}
+
+      {isOpenModalSold && (
+        <ModalBox
+          open={isOpenModalSold}
+          bodyText={"Are you sure this car has been sold??"}
+          actionClose={() => setIsOpenModalSold(false)}
+          actionYes={handleSoldCar}
+          nameNo={"Cancel"}
+          nameYes={"Confirm"}
+        />
+      )}
+
+      {isOpenModalCancel && (
+        <ModalBox
+          open={isOpenModalCancel}
+          bodyText={"Are you sure want to CANCEL this car up into Showroom??"}
+          actionClose={() => setIsOpenModalCancel(false)}
+          actionYes={handleCancelCarToSale}
+          nameNo={"Cancel"}
+          nameYes={"Confirm"}
+        />
       )}
 
       <Modal
@@ -209,6 +412,35 @@ const CarDetails = ({ navigation, route }) => {
 };
 
 const style = StyleSheet.create({
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderTopWidth: 2,
+    borderTopColor: COLORS.lightGray,
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(0, 0, 0, 0.3)",
+  },
+  buttonClick: {
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  orderButton: {
+    width: "100%",
+    height: 50,
+    backgroundColor: COLORS.lightGreen,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cancelledButton: {
+    width: "100%",
+    height: 50,
+    backgroundColor: COLORS.red,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   header: {
     width: WIDTH,
     height: 70,
@@ -232,6 +464,9 @@ const style = StyleSheet.create({
   imageSlide: {
     width: WIDTH,
     height: WIDTH * 0.6,
+  },
+  bodyStatusText: {
+    width: WIDTH,
   },
   main: {
     alignItems: "center",
@@ -297,11 +532,11 @@ const style = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
   },
-  orderButton: {
+  soldButton: {
     width: WIDTH * 0.9,
     height: 50,
     marginHorizontal: WIDTH * 0.05,
-    backgroundColor: COLORS.lightGreen,
+    backgroundColor: COLORS.orange,
     borderRadius: 5,
     justifyContent: "center",
     alignItems: "center",
@@ -337,6 +572,26 @@ const style = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
+  },
+  bodyStatus: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginLeft: 60,
+  },
+  status: {
+    fontSize: 18,
+    fontWeight: 500,
+  },
+  dots: {
+    width: 15,
+    height: 15,
+    borderRadius: 15,
+    marginHorizontal: 15,
+    transform: [{ translateY: 5 }],
+  },
+  titleContainer: {
+    marginTop: 10,
+    alignItems: "center",
   },
 });
 

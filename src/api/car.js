@@ -50,3 +50,14 @@ export const registerNewCar = async (token, data) => {
     return error.response;
   }
 };
+
+export const changeCarStatusByAdmin = async (token, licensePlate, status) => {
+  try {
+    const instance = createAxiosInstance(token);
+    const response = await instance.patch(`${LINK_API}/cars/changeStatus/${licensePlate}/${status}`);
+    return response;
+  } catch (error) {
+    console.error("Error confirm car:", error);
+    return error.response;
+  }
+}
