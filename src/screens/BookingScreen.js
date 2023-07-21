@@ -1,23 +1,30 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
-import { View, SafeAreaView, StyleSheet, Text, Image, ScrollView, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { AuthContext } from "../context/authContext";
 import COLORS from "../constants/colors";
-import { slotList } from "../constants/slot"; 
+import { slotList } from "../constants/slot";
 import WarningToLogin from "../components/WarningToLogin";
 import { getProfileUserInStorage } from "../hooks/user";
 import { getBooking } from "../api/booking";
-import { useFocusEffect } from '@react-navigation/native';
-import { checkTokenInStorage } from "../hooks/user"
-
+import { useFocusEffect } from "@react-navigation/native";
+import { checkTokenInStorage } from "../hooks/user";
 
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
 
 const Booking = ({ navigation }) => {
-  // const { accessToken, userDecode } = useContext(AuthContext);
+  const { userDecode } = useContext(AuthContext);
 
-  const [profile, setProfile] = useState([]);
   const [bookingData, setBookingData] = useState([]);
 
   useFocusEffect(
@@ -27,10 +34,10 @@ const Booking = ({ navigation }) => {
   );
 
   const getData = async () => {
-    const accessToken = await checkTokenInStorage()
-    const response = await getBooking(accessToken)
-    const data = response.data
-    setBookingData(data)
+    const accessToken = await checkTokenInStorage();
+    const response = await getBooking(accessToken);
+    const data = response.data;
+    setBookingData(data);
   };
 
   function shortenPrice(price) {
@@ -48,14 +55,14 @@ const Booking = ({ navigation }) => {
   }
 
   const getSlotTime = (slot) => {
-    let time = slot
+    let time = slot;
     slotList.map((item, key) => {
-      if(item.name === slot){
-        time = item.time
+      if (item.name === slot) {
+        time = item.time;
       }
-    })
-    return time
-  }
+    });
+    return time;
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -64,7 +71,7 @@ const Booking = ({ navigation }) => {
       case "Success":
         return "#0f8652";
       default:
-        return 'black';
+        return "black";
     }
   };
 
@@ -72,74 +79,77 @@ const Booking = ({ navigation }) => {
     return (
       <TouchableOpacity
         style={style.bookingCard}
-        onPress={() => navigation.navigate("BookingDetail", {booking : item})}
+        onPress={() => navigation.navigate("BookingDetail", { booking: item })}
         key={key}
       >
         <View style={style.cardHeader}>
-          <Text style={style.cardName}>
-            {item.car.name}
-          </Text>
-          <Text style={style.cardTransmission}>
-            {item.car.transmission}
-          </Text>
+          <Text style={style.cardName}>{item.car.name}</Text>
+          <Text style={style.cardTransmission}>{item.car.transmission}</Text>
         </View>
 
         <View style={style.cardBody}>
           <Image
             style={style.cardImage}
             source={{
-              uri: item.car.images ? item.car.images[0] : ""
+              uri: item.car.images ? item.car.images[0] : "",
             }}
           />
           <View style={style.cardBodyDetail}>
             <Text style={style.cardTime}>Time : {getSlotTime(item.slot)}</Text>
-            <Text style={style.cardPrice}>Price : {shortenPrice(item.car.minPrice)} - {shortenPrice(item.car.maxPrice)} VND{" "}</Text>
-          </View>
-        </View>
-
-        <View style={style.cardFooter}>
-          <View style={{
-            alignItems: "center",
-            // justifyContent: "center",
-            flexDirection: "row",
-            flexWrap: "wrap",
-          }}>
-            <View style={{ ...style.dots, backgroundColor: getStatusColor(item.status) }} />
-            <Text style={{ ...style.transmission, color: getStatusColor(item.status) }} >
-              {item.status}
+            <Text style={style.cardPrice}>
+              Price : {shortenPrice(item.car.minPrice)} -{" "}
+              {shortenPrice(item.car.maxPrice)} VND{" "}
             </Text>
           </View>
         </View>
 
+        <View style={style.cardFooter}>
+          <View
+            style={{
+              alignItems: "center",
+              // justifyContent: "center",
+              flexDirection: "row",
+              flexWrap: "wrap",
+            }}
+          >
+            <View
+              style={{
+                ...style.dots,
+                backgroundColor: getStatusColor(item.status),
+              }}
+            />
+            <Text
+              style={{
+                ...style.transmission,
+                color: getStatusColor(item.status),
+              }}
+            >
+              {item.status}
+            </Text>
+          </View>
+        </View>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#e8e9ee" }}
-    >
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+      <View style={style.header}>
+        <Text style={style.headerTitle}>Booking</Text>
+      </View>
       <View style={style.booking_container}>
-        {!profile ? (
+        {!userDecode ? (
           <WarningToLogin />
         ) : (
           <>
-            <View style={style.header}>
-              <Text style={style.headerTitle}>Booking</Text>
-            </View>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-            >
-              {
-                bookingData ?
-                  bookingData.map((item, key) => {
-                    return (
-                      bookingCard(item, key)
-                    )
-                  })
-                  :
-                  <Text>don't have any booking</Text>
-              }
+            <ScrollView showsVerticalScrollIndicator={false} style={style.scrollViewBottom}>
+              {bookingData ? (
+                bookingData.map((item, key) => {
+                  return bookingCard(item, key);
+                })
+              ) : (
+                <Text>Don't have any booking</Text>
+              )}
             </ScrollView>
           </>
         )}
@@ -172,7 +182,9 @@ const style = StyleSheet.create({
   bookingCard: {
     width: WIDTH,
     backgroundColor: COLORS.white,
-    marginTop: 15,
+    // marginTop: 15,
+    borderBottomWidth: 7,
+    borderBottomColor: COLORS.lightGray
   },
   cardHeader: {
     flexWrap: "wrap",
@@ -187,7 +199,7 @@ const style = StyleSheet.create({
     fontWeight: 500,
   },
   cardTransmission: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     backgroundColor: "#a2d2ff",
     paddingHorizontal: 15,
     paddingVertical: 5,
@@ -206,7 +218,7 @@ const style = StyleSheet.create({
     borderRadius: 15,
   },
   cardBodyDetail: {
-    justifyContent: "flex-end",
+    justifyContent: "center",
   },
   cardTime: {
     fontSize: 18,
@@ -227,12 +239,15 @@ const style = StyleSheet.create({
     transform: [{ translateY: 3 }],
   },
   transmission: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     // backgroundColor: COLORS.lightBlue,
     paddingHorizontal: 15,
     paddingVertical: 5,
     borderRadius: 15,
     marginTop: 5,
+  },
+  scrollViewBottom: {
+    marginBottom: 50
   }
 });
 

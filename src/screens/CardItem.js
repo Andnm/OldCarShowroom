@@ -44,7 +44,7 @@ const CardItem = ({ navigation, car }) => {
 
 const style = StyleSheet.create({
   card: {
-    height: 220,
+    height: 250,
     width,
     backgroundColor: COLORS.light,
     marginHorizontal: 2,

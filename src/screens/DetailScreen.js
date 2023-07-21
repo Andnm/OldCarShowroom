@@ -349,7 +349,7 @@ const Detail = ({ navigation, route }) => {
         <TouchableWithoutFeedback onPress={handleCloseBottomSheet}>
           <View style={style.modalContainer}>
             <View style={style.modalContent}>
-              <Text style={style.modalTitle}>Tùy chỉnh</Text>
+              <Text style={style.modalTitle}>Options</Text>
 
               {!favor ? (
                 <TouchableOpacity

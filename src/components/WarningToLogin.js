@@ -50,7 +50,7 @@ const style = StyleSheet.create({
     marginTop: 30,
   },
   text_container: {
-    marginTop: 30,
+    marginTop: 20,
   },
   text: {
     textAlign: "center",

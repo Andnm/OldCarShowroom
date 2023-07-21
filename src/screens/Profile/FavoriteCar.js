@@ -131,7 +131,7 @@ const FavoriteCar = ({ navigation }) => {
         <TouchableWithoutFeedback onPress={handleCloseBottomSheet}>
           <View style={style.modalContainer}>
             <View style={style.modalContent}>
-              <Text style={style.modalTitle}>Tùy chỉnh</Text>
+              <Text style={style.modalTitle}>Options</Text>
 
               <TouchableOpacity style={style.modalOption} onPress={() => setIsOpenModal(true)}>
                 <Icon

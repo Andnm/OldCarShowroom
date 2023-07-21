@@ -75,7 +75,7 @@ const Login = () => {
             >
               <Icon
                 size={24}
-                name={!showPassword ? "visibility" : "visibility_off"}
+                name={!showPassword ? "visibility" : "visibility-off"}
                 color={COLORS.lightGray}
               />
             </TouchableOpacity>

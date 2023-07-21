@@ -16,7 +16,7 @@ export const getNofiticationList = async (token) => {
         const response = await instance.get("/notifications");
         return response;
     } catch (error) {
-        return error;
+        return [];
     }
 };
 
@@ -29,7 +29,7 @@ export const setNofitication = async (token, notification_id) => {
         const response = await instance.patch("/notifications", data);
         return response;
     } catch (error) {
-        return error;
+        return [];
     }
 };
 
@@ -39,6 +39,6 @@ export const setNofiticationAll = async (token) => {
         const response = await instance.patch("/notifications/all");
         return response;
     } catch (error) {
-        return error;
+        return [];
     }
 };

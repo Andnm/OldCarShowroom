@@ -15,13 +15,13 @@ const HEIGHT = Dimensions.get('window').height;
 
 const endowData = [
   {
-    img: "https://img.freepik.com/premium-photo/banner-car-wheel-business-3d-render-illustration-wheel-black-background_37416-533.jpg?w=1380"
+    img: "https://img.freepik.com/premium-psd/car-sale-instagram-post-banner-design-template_509525-130.jpg?w=2000"
   },
   {
-    img: "https://img.freepik.com/premium-photo/banner-car-wheel-business-3d-render-illustration-wheel-black-background_37416-533.jpg?w=1380"
+    img: "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/car-sales-design-template-4fa0be6f6e087076f86446916d2ccf74_screen.jpg?ts=1689300513"
   },
   {
-    img: "https://img.freepik.com/premium-photo/banner-car-wheel-business-3d-render-illustration-wheel-black-background_37416-533.jpg?w=1380"
+    img: "https://vir.com.vn/stores/news_dataimages/2022/112022/12/11/b726fd37886053a1aaeae7904430b0bd.jpg?rt=20221112110948"
   },
 ]
 
@@ -39,16 +39,16 @@ const insuranceData = [
 
 const featureData = [
   {
-    img: "https://img.freepik.com/free-psd/car-rental-automotive-web-banner-template_106176-2541.jpg?w=2000",
+    img: "https://images.netdirector.co.uk/gforces-auto/image/upload/w_372,h_279,q_auto,c_fill,f_auto,fl_lossy/auto-client/4b6918643ab0d73c77b93833ac2a0487/sell_your_car_used_car_page_mob6.jpg",
   },
   {
-    img: "https://img.freepik.com/free-psd/car-rental-automotive-web-banner-template_106176-2541.jpg?w=2000",
+    img: "https://gomechanic.in/blog/wp-content/uploads/2022/06/Blog.jpg",
   },
   {
-    img: "https://img.freepik.com/free-psd/car-rental-automotive-web-banner-template_106176-2541.jpg?w=2000",
+    img: "https://blog.sbtjapan.com/wp-content/uploads/2022/11/MicrosoftTeams-image-4.png",
   },
   {
-    img: "https://img.freepik.com/free-psd/car-rental-automotive-web-banner-template_106176-2541.jpg?w=2000",
+    img: "https://carsguide-res.cloudinary.com/image/upload/f_auto%2Cfl_lossy%2Cq_auto%2Ct_default/v1/editorial/2006-Suzuki-Swift-hatchback-blue-1200x800.jpg",
   },
 ]
 
@@ -59,19 +59,19 @@ const placeData = [
     carAmount: 1200,
   },
   {
-    img: "https://vietnamdiscovery.com/wp-content/uploads/thumbnail/Things-to-do-in-Ho-Chi-Minh-pg6c38tekgneaywawyn2rivhfpq3klkh8xrnn20fjw.jpg",
-    name: "Hồ Chí Minh",
-    carAmount: 1200,
+    img: "https://cdn.vntrip.vn/cam-nang/wp-content/uploads/2017/07/ho-hoan-kiem-3.jpg",
+    name: "Hà Nội",
+    carAmount: 2100,
   },
   {
-    img: "https://vietnamdiscovery.com/wp-content/uploads/thumbnail/Things-to-do-in-Ho-Chi-Minh-pg6c38tekgneaywawyn2rivhfpq3klkh8xrnn20fjw.jpg",
-    name: "Hồ Chí Minh",
-    carAmount: 1200,
+    img: "https://cdn.tgdd.vn/Files/2021/06/22/1362277/tat-tan-tat-kinh-nghiem-du-lich-da-lat-checkin-o-dau-an-gi-202206031411593741.jpeg",
+    name: "Đà Lạt",
+    carAmount: 450,
   },
   {
-    img: "https://vietnamdiscovery.com/wp-content/uploads/thumbnail/Things-to-do-in-Ho-Chi-Minh-pg6c38tekgneaywawyn2rivhfpq3klkh8xrnn20fjw.jpg",
-    name: "Hồ Chí Minh",
-    carAmount: 1200,
+    img: "https://statics.vinpearl.com/du-lich-da-nang_1657939501.JPG",
+    name: "Đà Nẵng",
+    carAmount: 200,
   },
 ]
 
@@ -150,7 +150,7 @@ const Home = ({ navigation }) => {
         </LinearGradient>
         <Image
           source={
-            { uri: "https://img.freepik.com/premium-photo/banner-car-wheel-business-3d-render-illustration-wheel-black-background_37416-533.jpg?w=1380" }
+            { uri: "https://scontent.fsgn3-1.fna.fbcdn.net/v/t1.6435-9/53743427_2064018370341726_7663609325637599232_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=730e14&_nc_ohc=IKvdEmilKWQAX-tTUq8&_nc_ht=scontent.fsgn3-1.fna&oh=00_AfBnYgPoHTfTdeDWUx8GiQTj7iHYhhtDWpEHZqgsdeg2ug&oe=64E12E26" }
           }
           style={style.banner}
         />
@@ -290,7 +290,7 @@ const Home = ({ navigation }) => {
             marginVertical: WIDTH * 0.02,
             marginHorizontal: 15,
           }}>
-            You want to rent a car
+            You want to sale a car
           </Text>
           <Text style={{
             color: "white",
@@ -467,7 +467,7 @@ const style = StyleSheet.create({
     color: "white",
     backgroundColor: "rgb(145,212,183)",
     alignItems: "center",
-    paddingHorizontal: 15,
+    // paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 5,
     marginHorizontal: 15,

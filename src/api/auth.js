@@ -6,7 +6,6 @@ export const signIn = async (data) => {
     const response = await axios.post(`${LINK_API}` + "/auth/signin", data);
     return response;
   } catch (error) {
-    console.error("Error login:", error);
     return [];
   }
 };
