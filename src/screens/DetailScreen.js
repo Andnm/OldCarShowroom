@@ -42,24 +42,28 @@ const Detail = ({ navigation, route }) => {
     }, [])
   );
 
+  const checkFavor = (licensePlate) => {
+    return favorCar?.includes(licensePlate);
+  };
+
   useEffect(() => {
-    setFavor(checkFavor(car.licensePlate));
+    setFavor(checkFavor(car?.licensePlate));
   }, [favorCar]);
 
   const getData = async () => {
     const data = await getCarList()
     const response = await getFavorCarList(accessToken);
-    const filterData = data.filter((item) => item.status === "Confirm");
-    let favorData = response.data;
+    const filterData = data?.filter((item) => item?.status === "Confirm");
+    let favorData = response?.data;
     setCarData(filterData)
-    if (response.status !== 401) {
-      favorData = favorData.map((obj) => obj.licensePlate);
+    if (response?.status !== 401) {
+      favorData = favorData?.map((obj) => obj?.licensePlate);
       setFavorCar(favorData);
     }
   };
 
   const checkOwner = () => {
-    if(userDecode._id === car.user_id){
+    if(userDecode?._id === car?.user_id){
       setDisableButton(false)
     }else{
       if (!accessToken) {
@@ -149,10 +153,6 @@ const Detail = ({ navigation, route }) => {
 
   const line = () => {
     return <View style={style.line}></View>;
-  };
-
-  const checkFavor = (licensePlate) => {
-    return favorCar.includes(licensePlate);
   };
 
   const handleNavigationToBooking = () => {
@@ -254,22 +254,22 @@ const Detail = ({ navigation, route }) => {
         {line()}
         <Text style={style.title}>Facilities</Text>
         <View style={style.utilities}>
-          {facilitiesServices.map((item, key) => {
+          {facilitiesServices.map((item) => {
             if (car.otherFacilities.includes(item.id)) {
               return utilitiesIcon(item.name, item.icon, (key = item.id));
             }
           })}
         </View>
         {line()}
-        <Text style={style.title}>related vehicle</Text>
+        <Text style={style.title}>related car</Text>
         <ScrollView
           style={style.relatedSlide}
           horizontal
           showsHorizontalScrollIndicator={false}
         >
-          {carData[0] ? (
-            carData.map((item, key) => {
-              return item._id !== car._id ? (
+          {carData?.length > 0 ? (
+            carData?.map((item, key) => {
+              return item?._id !== car?._id ? (
                 <TouchableOpacity
                   key={key}
                   style={style.related}

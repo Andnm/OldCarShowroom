@@ -106,13 +106,8 @@ const Notification = ({ navigation }) => {
 
   const handleSeenAll = async () => {
     const response = await setNofiticationAll(accessToken);
-    console.log(response)
     if (response?.status === 200) {
-      let list = nofitiList;
-      list?.map((item, key) => {
-        list[key] = { ...item, newNotification: false };
-      });
-      setNofitiList(list);
+      setNofitiList(response.data);
       handleCloseBottomSheet();
     }
   };
@@ -141,7 +136,6 @@ const Notification = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
-      {isLoading && <SpinnerLoading />}
       <View style={style.header}>
         <Text style={style.headerTitle}>Notification</Text>
         {nofitiList?.length > 0 ? (
@@ -154,40 +148,45 @@ const Notification = ({ navigation }) => {
           />
         ) : null}
       </View>
-      <View style={style.notification_container}>
-        {!userDecode ? (
-          <WarningToLogin />
-        ) : (
-          <>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              style={style.scrollViewBottom}
-            >
-              {!nofitiList[0] ? <Text>don't have any notification</Text> : ""}
-              {newNofitiList[0] ? (
-                <Text style={style.title}>New notifications</Text>
-              ) : (
-                ""
-              )}
-              {newNofitiList[0]
-                ? newNofitiList?.map((item, key) => {
+      {isLoading ?
+        <SpinnerLoading />
+        :
+        <View style={style.notification_container}>
+          {!userDecode ? (
+            <WarningToLogin />
+          ) : (
+            <>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={style.scrollViewBottom}
+              >
+                {!nofitiList[0] ? <Text>don't have any notification</Text> : ""}
+                {newNofitiList[0] ? (
+                  <Text style={style.title}>New notifications</Text>
+                ) : (
+                  ""
+                )}
+                {newNofitiList[0]
+                  ? newNofitiList?.map((item, key) => {
                     return nofitiCard(item, key);
                   })
-                : ""}
-              {oldNofitiList[0] ? (
-                <Text style={style.title}>Old notifications</Text>
-              ) : (
-                ""
-              )}
-              {oldNofitiList[0]
-                ? oldNofitiList?.map((item, key) => {
+                  : ""}
+                {oldNofitiList[0] ? (
+                  <Text style={style.title}>Old notifications</Text>
+                ) : (
+                  ""
+                )}
+                {oldNofitiList[0]
+                  ? oldNofitiList?.map((item, key) => {
                     return nofitiCard(item, key);
                   })
-                : ""}
-            </ScrollView>
-          </>
-        )}
-      </View>
+                  : ""}
+              </ScrollView>
+            </>
+          )}
+        </View>
+      }
+
 
       <Modal
         visible={bottomSheetVisible}

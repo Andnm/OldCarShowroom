@@ -60,11 +60,13 @@ const CreateBooking = ({ navigation, route }) => {
     };
     const response = await createBooking(accessToken, data);
 
-    if (response.status === 200 || response.status === 201) {
+    if (response?.status === 200 || response?.status === 201) {
       showToast("Success", "Create Booking Successfully!", "success");
-      navigation("MyCar")
+      navigation.navigate("Booking")
+      
     } else {
       showToast("Error", "Create Booking failed!", "error");
+      setIsLoading(false);
     }
     setIsLoading(false);
   };

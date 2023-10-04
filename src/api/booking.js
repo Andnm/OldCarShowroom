@@ -11,9 +11,11 @@ const createAxiosInstance = (token) => {
 };
 
 export const createBooking = async (token, data) => {
+ 
   try {
     const instance = createAxiosInstance(token);
     const response = await instance.post("/bookings", data);
+    console.log('api', response)
     return response;
   } catch (error) {
     return [];

@@ -95,7 +95,7 @@ const Booking = ({ navigation }) => {
             }}
           />
           <View style={style.cardBodyDetail}>
-            <Text style={style.cardTime}>Time : {getSlotTime(item.slot)}</Text>
+            <Text style={style.cardTime}>Time : {getSlotTime(item.slot)}, {item.date}</Text>
             <Text style={style.cardPrice}>
               Price : {shortenPrice(item.car.minPrice)} -{" "}
               {shortenPrice(item.car.maxPrice)} VND{" "}

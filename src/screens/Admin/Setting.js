@@ -12,6 +12,7 @@ const Setting = ({ navigation }) => {
   const handleLogoutFunction = () => {
     setIsOpenModalConfirm(false)
     logoutFunction();
+    navigation.navigate("Home")
   };
 
   return (
